@@ -14,36 +14,36 @@ description: 'Get all mailbox integrations for the current user with their setti
       Integration ID
     </ResponseField>
     
+    <ResponseField name="user_id" type="integer" required>
+      Owner user ID
+    </ResponseField>
+    
     <ResponseField name="type" type="string" required>
       Integration type (e.g., "gmail")
     </ResponseField>
     
     <ResponseField name="account_identifier" type="string" required>
-      Email address or account identifier
+      Email address or account identifier (unique per user+type)
     </ResponseField>
     
     <ResponseField name="status" type="string" required>
-      Connection status ("connected", "disconnected", "paused")
-    </ResponseField>
-    
-    <ResponseField name="is_default" type="boolean" required>
-      Whether this is the default mailbox
+      Connection status: `connected`, `disconnected`, `failed`
     </ResponseField>
     
     <ResponseField name="per_day" type="integer" required>
-      Daily email limit
+      Daily email limit (rate limiting)
     </ResponseField>
     
     <ResponseField name="per_hour" type="integer" required>
-      Hourly email limit
+      Hourly email limit (rate limiting)
     </ResponseField>
     
     <ResponseField name="min_delay_seconds" type="integer" required>
-      Minimum delay between emails in seconds
+      Minimum delay between emails in seconds (rate limiting)
     </ResponseField>
     
-    <ResponseField name="timezone" type="string" required>
-      Timezone identifier (e.g., "Africa/Cairo")
+    <ResponseField name="metadata" type="object">
+      Additional metadata for the integration (JSON)
     </ResponseField>
     
     <ResponseField name="authorized_gmail" type="boolean" required>
@@ -52,6 +52,14 @@ description: 'Get all mailbox integrations for the current user with their setti
     
     <ResponseField name="token_expiry_date" type="string">
       OAuth token expiry timestamp (ISO 8601)
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string" required>
+      Creation timestamp
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
+      Last update timestamp
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -78,29 +86,33 @@ description: 'Get all mailbox integrations for the current user with their setti
   "data": [
     {
       "id": 42,
+      "user_id": 15,
       "type": "gmail",
       "account_identifier": "me@acme.com",
       "status": "connected",
-      "is_default": true,
       "per_day": 200,
       "per_hour": 20,
       "min_delay_seconds": 600,
-      "timezone": "Africa/Cairo",
+      "metadata": {},
       "authorized_gmail": true,
-      "token_expiry_date": "2025-11-30T10:00:00Z"
+      "token_expiry_date": "2025-11-30T10:00:00Z",
+      "created_at": "2025-01-15T08:00:00Z",
+      "updated_at": "2025-11-25T14:30:00Z"
     },
     {
       "id": 43,
+      "user_id": 15,
       "type": "gmail",
       "account_identifier": "sales@acme.com",
       "status": "connected",
-      "is_default": false,
       "per_day": 150,
       "per_hour": 15,
       "min_delay_seconds": 900,
-      "timezone": "America/New_York",
+      "metadata": {},
       "authorized_gmail": true,
-      "token_expiry_date": "2025-12-15T10:00:00Z"
+      "token_expiry_date": "2025-12-15T10:00:00Z",
+      "created_at": "2025-02-10T10:00:00Z",
+      "updated_at": "2025-11-20T16:00:00Z"
     }
   ],
   "metadata": {},
@@ -112,3 +124,7 @@ description: 'Get all mailbox integrations for the current user with their setti
 }
 ```
 </ResponseExample>
+
+<Note>
+  Each user can have multiple integrations, but the combination of `user_id`, `type`, and `account_identifier` must be unique (enforced by unique constraint).
+</Note>

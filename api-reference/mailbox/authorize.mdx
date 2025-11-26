@@ -15,7 +15,7 @@ description: 'Exchange OAuth authorization code for access tokens and create/upd
 </ParamField>
 
 <ParamField query="redirect_uri" type="string" required>
-  OAuth redirect URI
+  OAuth redirect URI (must match the one registered with Google)
 </ParamField>
 
 ## Response
@@ -26,36 +26,52 @@ description: 'Exchange OAuth authorization code for access tokens and create/upd
       Integration ID
     </ResponseField>
     
+    <ResponseField name="user_id" type="integer" required>
+      Owner user ID
+    </ResponseField>
+    
     <ResponseField name="type" type="string" required>
-      Integration type (e.g., "gmail")
+      Integration type ("gmail")
     </ResponseField>
     
     <ResponseField name="account_identifier" type="string" required>
-      Email address
+      Email address from Google account
     </ResponseField>
     
     <ResponseField name="status" type="string" required>
-      Connection status
+      Connection status (will be "connected" on success)
     </ResponseField>
     
     <ResponseField name="authorized_gmail" type="boolean" required>
-      Gmail authorization status
+      Gmail authorization status (will be true)
     </ResponseField>
     
     <ResponseField name="per_day" type="integer" required>
-      Daily email limit
+      Daily email limit (default: 200)
     </ResponseField>
     
     <ResponseField name="per_hour" type="integer" required>
-      Hourly email limit
+      Hourly email limit (default: 20)
     </ResponseField>
     
     <ResponseField name="min_delay_seconds" type="integer" required>
-      Minimum delay between emails
+      Minimum delay between emails (default: 600)
     </ResponseField>
     
-    <ResponseField name="timezone" type="string" required>
-      Timezone identifier
+    <ResponseField name="metadata" type="object">
+      Additional metadata
+    </ResponseField>
+    
+    <ResponseField name="token_expiry_date" type="string">
+      OAuth token expiry timestamp
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string" required>
+      Creation timestamp
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
+      Last update timestamp
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -65,6 +81,7 @@ description: 'Exchange OAuth authorization code for access tokens and create/upd
 {
   "data": {
     "id": 42,
+    "user_id": 15,
     "type": "gmail",
     "account_identifier": "me@acme.com",
     "status": "connected",
@@ -72,10 +89,17 @@ description: 'Exchange OAuth authorization code for access tokens and create/upd
     "per_day": 200,
     "per_hour": 20,
     "min_delay_seconds": 600,
-    "timezone": "Africa/Cairo"
+    "metadata": {},
+    "token_expiry_date": "2025-12-31T23:59:59Z",
+    "created_at": "2025-11-25T10:00:00Z",
+    "updated_at": "2025-11-25T10:00:00Z"
   },
   "metadata": {},
   "pagination": null
 }
 ```
 </ResponseExample>
+
+<Note>
+  If an integration with the same `user_id`, `type`, and `account_identifier` already exists, it will be updated. Otherwise, a new integration is created. The unique constraint prevents duplicate integrations.
+</Note>

@@ -1,7 +1,7 @@
 ---
 title: 'Update Integration Settings'
 api: 'PATCH /integrations/:id'
-description: 'Update rate limits, timezone, or status for a mailbox integration'
+description: 'Update rate limits or status for a mailbox integration'
 ---
 
 ## Path Parameters
@@ -24,10 +24,6 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
   Minimum delay between emails in seconds
 </ParamField>
 
-<ParamField body="timezone" type="string">
-  Timezone identifier (e.g., "Africa/Cairo", "America/New_York")
-</ParamField>
-
 <ParamField body="status" type="string">
   Integration status: `connected`, `disconnected`, `failed`
 </ParamField>
@@ -42,7 +38,6 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
   "per_day": 200,
   "per_hour": 20,
   "min_delay_seconds": 600,
-  "timezone": "Africa/Cairo",
   "status": "connected"
 }
 ```
@@ -56,6 +51,10 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
   <Expandable title="Integration Object">
     <ResponseField name="id" type="integer" required>
       Integration ID
+    </ResponseField>
+    
+    <ResponseField name="user_id" type="integer" required>
+      Owner user ID
     </ResponseField>
     
     <ResponseField name="type" type="string" required>
@@ -86,12 +85,16 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
       Minimum delay between emails
     </ResponseField>
     
-    <ResponseField name="timezone" type="string" required>
-      Timezone identifier
-    </ResponseField>
-    
     <ResponseField name="metadata" type="object">
       Additional metadata
+    </ResponseField>
+    
+    <ResponseField name="token_expiry_date" type="string">
+      OAuth token expiry timestamp
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
+      Last update timestamp
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -101,6 +104,7 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
 {
   "data": {
     "id": 42,
+    "user_id": 15,
     "type": "gmail",
     "account_identifier": "user@company.com",
     "status": "connected",
@@ -108,8 +112,9 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
     "per_day": 200,
     "per_hour": 20,
     "min_delay_seconds": 600,
-    "timezone": "Africa/Cairo",
-    "metadata": {}
+    "metadata": {},
+    "token_expiry_date": "2025-12-31T23:59:59Z",
+    "updated_at": "2025-11-25T16:30:00Z"
   },
   "metadata": {},
   "pagination": null

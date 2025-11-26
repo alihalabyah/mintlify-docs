@@ -1,0 +1,166 @@
+---
+title: 'Incoming Email Webhook'
+api: 'POST /webhooks/emails/incoming'
+description: 'Webhook endpoint for processing incoming emails from Gmail (via Pub/Sub)'
+---
+
+<Note>
+  This endpoint is called by Gmail's push notification system (Pub/Sub) when new emails are received. It matches incoming emails to sequence leads and triggers AI planning workflow.
+</Note>
+
+## Request Body
+
+<ParamField body="integration_id" type="integer" required>
+  Which mailbox integration received the email
+</ParamField>
+
+<ParamField body="integration_message_id" type="string" required>
+  Gmail message ID
+</ParamField>
+
+<ParamField body="integration_thread_id" type="string" required>
+  Gmail thread ID
+</ParamField>
+
+<ParamField body="in_reply_to_integration_message_id" type="string">
+  Gmail message ID this email is replying to (from In-Reply-To header)
+</ParamField>
+
+<ParamField body="from_email" type="string" required>
+  Sender email address
+</ParamField>
+
+<ParamField body="to_email" type="string" required>
+  Recipient email address
+</ParamField>
+
+<ParamField body="cc_emails" type="array">
+  CC recipients (JSON array)
+</ParamField>
+
+<ParamField body="content" type="object" required>
+  Email content (subject, body, etc.)
+  
+  <Expandable title="Content Object">
+    <ParamField body="subject" type="string" required>
+      Email subject
+    </ParamField>
+    
+    <ParamField body="body_text" type="string">
+      Plain text body
+    </ParamField>
+    
+    <ParamField body="body_html" type="string">
+      HTML body
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="received_at" type="string" required>
+  When the email was received (ISO 8601 timestamp)
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Email type: `replied`, `oof`, `bounced`, `delivered`, `opened`, `clicked`, `other`
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "integration_id": 42,
+  "integration_message_id": "msg_def456",
+  "integration_thread_id": "thread_xyz789",
+  "in_reply_to_integration_message_id": "msg_abc123",
+  "from_email": "jane@acme.com",
+  "to_email": "user@company.com",
+  "cc_emails": null,
+  "content": {
+    "subject": "Re: Quick intro via Alice",
+    "body_text": "Thanks for reaching out! I'd love to chat. Are you available Tuesday?",
+    "body_html": "<p>Thanks for reaching out! I'd love to chat. Are you available Tuesday?</p>"
+  },
+  "received_at": "2025-11-10T09:05:00Z",
+  "type": "replied"
+}
+```
+</RequestExample>
+
+## Response
+
+<ResponseField name="data" type="object">
+  Processing result
+  
+  <Expandable title="Processing Result">
+    <ResponseField name="email_inbox_id" type="integer" required>
+      Created email_inbox record ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_lead_id" type="integer">
+      Matched sequence lead ID (null if no match found)
+    </ResponseField>
+    
+    <ResponseField name="sequence_lead_activity_id" type="integer">
+      Created activity record ID (if matched)
+    </ResponseField>
+    
+    <ResponseField name="matched" type="boolean" required>
+      Whether the email was successfully matched to a sequence lead
+    </ResponseField>
+    
+    <ResponseField name="processing_status" type="string" required>
+      Processing status: `matched_and_queued`, `matched_no_action`, `no_match`
+    </ResponseField>
+    
+    <ResponseField name="ai_workflow_triggered" type="boolean">
+      Whether Workflow #4 (AI Next Action) was triggered
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "email_inbox_id": 7001,
+    "sequence_lead_id": 1001,
+    "sequence_lead_activity_id": 322,
+    "matched": true,
+    "processing_status": "matched_and_queued",
+    "ai_workflow_triggered": true
+  },
+  "metadata": {
+    "request_id": "req_webhook_123",
+    "timestamp": "2025-11-10T09:05:01Z"
+  },
+  "pagination": null
+}
+```
+</ResponseExample>
+
+## Matching Logic
+
+The webhook uses a multi-layer matching strategy (in order of priority):
+
+1. **Exact thread ID match:** `integration_thread_id` in `email_outgoing` → get `sequence_lead_id`
+2. **Message ID match:** `in_reply_to_integration_message_id` matches `integration_message_id` in `email_outgoing`
+3. **Email address match:** `from_email` + `to_email` combination in `sequence_leads.lead_data`
+
+If a match is found:
+- Creates `email_inbox` record with `sequence_lead_id` populated
+- Creates `sequence_lead_activity` record of type `incoming_email`
+- Updates `sequence_leads.last_inbound_at = NOW()`
+- Triggers **Workflow #4: AI Next Action** to process the reply
+
+## Email Types
+
+- **`replied`**: Standard reply to an outgoing email
+- **`oof`**: Out-of-office auto-reply
+- **`bounced`**: Bounce notification
+- **`delivered`**: Delivery confirmation (tracking pixel)
+- **`opened`**: Email opened (tracking pixel)
+- **`clicked`**: Link clicked (tracking link)
+- **`other`**: Other types of incoming messages
+
+<Note>
+  This webhook is typically configured in Gmail's API settings with Pub/Sub push notifications. The system must handle idempotency since webhooks may be delivered multiple times.
+</Note>

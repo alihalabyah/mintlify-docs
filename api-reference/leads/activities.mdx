@@ -14,10 +14,16 @@ description: 'Get all activity history for a specific lead in a sequence'
   Lead ID
 </ParamField>
 
+## Query Parameters
+
+<ParamField query="activity_type" type="string">
+  Filter by type: `incoming_email`, `outgoing_email`, `system_note`
+</ParamField>
+
 ## Response
 
 <ResponseField name="data" type="array">
-  Array of activity objects
+  Array of activity objects ordered by created_at ASC
   
   <Expandable title="Activity Object">
     <ResponseField name="id" type="integer" required>
@@ -29,23 +35,51 @@ description: 'Get all activity history for a specific lead in a sequence'
     </ResponseField>
     
     <ResponseField name="activity_type" type="string" required>
-      Type: `outgoing_email`, `incoming_email`, etc.
+      Type: `incoming_email`, `outgoing_email`, `system_note`
+    </ResponseField>
+    
+    <ResponseField name="is_approved" type="boolean">
+      Approval status (for outgoing_email activities)
     </ResponseField>
     
     <ResponseField name="status" type="string">
-      Activity status
+      Status: `pending`, `approved`, `rejected`
     </ResponseField>
     
-    <ResponseField name="subject" type="string">
-      Email subject (for outgoing emails)
-    </ResponseField>
-    
-    <ResponseField name="engagement_status" type="string">
-      Engagement status: `opened`, `replied`, etc.
+    <ResponseField name="due_at" type="string">
+      Planned execution timestamp
     </ResponseField>
     
     <ResponseField name="executed_at" type="string">
-      Execution timestamp
+      Actual execution timestamp
+    </ResponseField>
+    
+    <ResponseField name="outgoing_email_id" type="integer">
+      FK to email_outgoing table
+    </ResponseField>
+    
+    <ResponseField name="incoming_email_id" type="integer">
+      FK to email_inbox table
+    </ResponseField>
+    
+    <ResponseField name="integration_thread_id" type="string">
+      Gmail thread ID
+    </ResponseField>
+    
+    <ResponseField name="integration_message_id" type="string">
+      Gmail message ID
+    </ResponseField>
+    
+    <ResponseField name="ai_confidence_score" type="number">
+      AI confidence score (0.00-1.00)
+    </ResponseField>
+    
+    <ResponseField name="ai_payload" type="object">
+      Full AI context (JSON)
+    </ResponseField>
+    
+    <ResponseField name="rejection_reason" type="string">
+      User rejection reason
     </ResponseField>
     
     <ResponseField name="created_at" type="string" required>
@@ -59,22 +93,40 @@ description: 'Get all activity history for a specific lead in a sequence'
 {
   "data": [
     {
-      "id": 321,
+      "id": 320,
       "sequence_lead_id": 1001,
       "activity_type": "outgoing_email",
+      "is_approved": true,
       "status": "approved",
-      "subject": "Quick intro",
-      "engagement_status": "opened",
-      "executed_at": "2025-11-10T09:00:00Z",
+      "due_at": "2025-11-10T09:00:00Z",
+      "executed_at": "2025-11-10T09:00:15Z",
+      "outgoing_email_id": 9001,
+      "incoming_email_id": null,
+      "integration_thread_id": "thread_xyz789",
+      "integration_message_id": "msg_abc123",
+      "ai_confidence_score": 0.85,
+      "ai_payload": {
+        "template_used": "Step 1 - Intro",
+        "reasoning": "Initial outreach with introducer mention"
+      },
+      "rejection_reason": null,
       "created_at": "2025-11-10T08:55:00Z"
     },
     {
-      "id": 322,
+      "id": 321,
       "sequence_lead_id": 1001,
       "activity_type": "incoming_email",
+      "is_approved": null,
       "status": null,
-      "engagement_status": "replied",
+      "due_at": null,
       "executed_at": "2025-11-10T09:05:00Z",
+      "outgoing_email_id": null,
+      "incoming_email_id": 7001,
+      "integration_thread_id": "thread_xyz789",
+      "integration_message_id": "msg_def456",
+      "ai_confidence_score": null,
+      "ai_payload": null,
+      "rejection_reason": null,
       "created_at": "2025-11-10T09:05:00Z"
     }
   ],
@@ -87,3 +139,7 @@ description: 'Get all activity history for a specific lead in a sequence'
 }
 ```
 </ResponseExample>
+
+<Note>
+  Activities are ordered chronologically (created_at ASC) to show the complete conversation timeline. Use `outgoing_email_id` or `incoming_email_id` to retrieve full email content from respective tables.
+</Note>

@@ -97,6 +97,10 @@
               "api-reference/activities/approve",
               "api-reference/activities/reject"
             ]
+          },
+          {
+            "group": "Webhooks",
+            "pages": ["api-reference/webhooks/incoming-email"]
           }
         ]
       }
