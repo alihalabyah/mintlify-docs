@@ -1,7 +1,7 @@
 ---
 title: 'Get Email Engagement Activity'
-api: 'GET /emails/:id/activities'
-description: 'Get engagement timeline for a sent email (delivered, opened, clicked, replied, bounced)'
+api: 'GET /emails/:id/engagement'
+description: 'Get engagement events and replies for a sent email (delivered, opened, clicked, replied, bounced)'
 ---
 
 ## Path Parameters
@@ -14,30 +14,52 @@ description: 'Get engagement timeline for a sent email (delivered, opened, click
 
 <ResponseField name="data" type="object">
   <Expandable title="Engagement Data">
+    <ResponseField name="email" type="object" required>
+      Email summary information
+      
+      <Expandable title="Email Info">
+        <ResponseField name="id" type="integer" required>
+          Email ID
+        </ResponseField>
+        
+        <ResponseField name="integration_message_id" type="string">
+          Gmail message ID
+        </ResponseField>
+        
+        <ResponseField name="integration_thread_id" type="string">
+          Gmail thread ID
+        </ResponseField>
+        
+        <ResponseField name="sent_at" type="string">
+          Send timestamp
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
     <ResponseField name="events" type="array" required>
-      Array of engagement event objects (delivered, opened, clicked, bounced)
+      Array of engagement events from email_inbox (type: delivered, opened, clicked, bounced)
       
       <Expandable title="Event Object">
         <ResponseField name="id" type="integer" required>
-          Event ID
+          Event ID (email_inbox record)
         </ResponseField>
         
         <ResponseField name="type" type="string" required>
-          Event type: `delivered`, `opened`, `clicked`, `bounced`
+          Event type: `delivered`, `opened`, `clicked`, `bounced`, `other`
         </ResponseField>
         
-        <ResponseField name="created_at" type="string" required>
+        <ResponseField name="received_at" type="string" required>
           Event timestamp
         </ResponseField>
         
-        <ResponseField name="user_agent" type="string">
-          User agent (for opens/clicks)
+        <ResponseField name="content" type="object">
+          Event metadata (user agent, click URL, etc.)
         </ResponseField>
       </Expandable>
     </ResponseField>
     
     <ResponseField name="replies" type="array" required>
-      Array of reply email objects
+      Array of reply emails from email_inbox (type: replied)
       
       <Expandable title="Reply Object">
         <ResponseField name="id" type="integer" required>
@@ -52,8 +74,12 @@ description: 'Get engagement timeline for a sent email (delivered, opened, click
           Receipt timestamp
         </ResponseField>
         
-        <ResponseField name="body_preview" type="string">
-          Preview of reply body
+        <ResponseField name="content" type="object">
+          Email content with subject and body preview
+        </ResponseField>
+        
+        <ResponseField name="type" type="string" required>
+          Will be `replied`
         </ResponseField>
       </Expandable>
     </ResponseField>
@@ -64,17 +90,34 @@ description: 'Get engagement timeline for a sent email (delivered, opened, click
 ```json
 {
   "data": {
+    "email": {
+      "id": 9001,
+      "integration_message_id": "msg_abc123",
+      "integration_thread_id": "thread_xyz789",
+      "sent_at": "2025-11-10T09:00:00Z"
+    },
     "events": [
       {
-        "id": 1,
+        "id": 7000,
         "type": "delivered",
-        "created_at": "2025-11-10T09:00:20Z"
+        "received_at": "2025-11-10T09:00:20Z",
+        "content": {}
       },
       {
-        "id": 2,
+        "id": 7002,
         "type": "opened",
-        "created_at": "2025-11-10T09:03:11Z",
-        "user_agent": "Apple Mail"
+        "received_at": "2025-11-10T09:03:11Z",
+        "content": {
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+        }
+      },
+      {
+        "id": 7003,
+        "type": "clicked",
+        "received_at": "2025-11-10T09:04:05Z",
+        "content": {
+          "url": "https://calendly.com/user/meeting"
+        }
       }
     ],
     "replies": [
@@ -82,16 +125,20 @@ description: 'Get engagement timeline for a sent email (delivered, opened, click
         "id": 7001,
         "from_email": "jane@acme.com",
         "received_at": "2025-11-10T09:05:00Z",
-        "body_preview": "Thanks for reaching out..."
+        "content": {
+          "subject": "Re: Quick intro via Alice",
+          "body_preview": "Thanks for reaching out! I'd love to chat..."
+        },
+        "type": "replied"
       }
     ]
   },
   "metadata": {},
-  "pagination": {
-    "cursor": null,
-    "has_more": false,
-    "count": 3
-  }
+  "pagination": null
 }
 ```
 </ResponseExample>
+
+<Note>
+  Engagement tracking relies on webhook processing from Gmail. Events are stored in the `email_inbox` table with the corresponding `integration_message_id` and categorized by type (delivered, opened, clicked, replied, bounced, oof, other).
+</Note>

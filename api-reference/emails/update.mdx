@@ -1,7 +1,7 @@
 ---
 title: 'Update Scheduled Email'
 api: 'PATCH /emails/:id'
-description: "Edit a scheduled email's subject, body, or send time (only if not yet sent)"
+description: "Edit a draft or scheduled email's content or send time (only if not yet sent)"
 ---
 
 ## Path Parameters
@@ -12,23 +12,43 @@ description: "Edit a scheduled email's subject, body, or send time (only if not 
 
 ## Body Parameters
 
-<ParamField body="subject" type="string">
-  Updated email subject
-</ParamField>
-
-<ParamField body="body_html" type="string">
-  Updated email body (HTML)
+<ParamField body="content" type="object">
+  Updated email content
+  
+  <Expandable title="Content Object">
+    <ParamField body="subject" type="string">
+      Email subject line
+    </ParamField>
+    
+    <ParamField body="body" type="string">
+      Email body (HTML)
+    </ParamField>
+  </Expandable>
 </ParamField>
 
 <ParamField body="due_at" type="string">
   Updated send time (ISO 8601 timestamp)
 </ParamField>
 
+<ParamField body="to_email" type="string">
+  Update recipient email address
+</ParamField>
+
+<ParamField body="cc_emails" type="array">
+  Update CC recipients
+</ParamField>
+
+<ParamField body="reply_in_thread" type="boolean">
+  Whether to reply in existing thread
+</ParamField>
+
 <RequestExample>
 ```json
 {
-  "subject": "Updated subject",
-  "body_html": "<p>Updated...</p>",
+  "content": {
+    "subject": "Updated subject",
+    "body": "<p>Updated content...</p>"
+  },
   "due_at": "2025-11-12T09:30:00Z"
 }
 ```
@@ -48,20 +68,20 @@ description: "Edit a scheduled email's subject, body, or send time (only if not 
       Sequence lead ID
     </ResponseField>
     
-    <ResponseField name="subject" type="string" required>
-      Email subject
-    </ResponseField>
-    
-    <ResponseField name="body_html" type="string" required>
-      Email body
-    </ResponseField>
-    
     <ResponseField name="status" type="string" required>
       Email status
     </ResponseField>
     
-    <ResponseField name="due_at" type="string" required>
-      Scheduled send time
+    <ResponseField name="content" type="object" required>
+      Updated email content
+    </ResponseField>
+    
+    <ResponseField name="due_at" type="string">
+      Updated scheduled time
+    </ResponseField>
+    
+    <ResponseField name="to_email" type="string" required>
+      Recipient email
     </ResponseField>
     
     <ResponseField name="updated_at" type="string" required>
@@ -76,10 +96,18 @@ description: "Edit a scheduled email's subject, body, or send time (only if not 
   "data": {
     "id": 9002,
     "sequence_lead_id": 1001,
-    "subject": "Updated subject",
-    "body_html": "<p>Updated...</p>",
-    "status": "approved",
+    "sequence_lead_activity_id": 321,
+    "integration_id": 42,
+    "status": "draft",
+    "content": {
+      "subject": "Updated subject",
+      "body": "<p>Updated content...</p>"
+    },
     "due_at": "2025-11-12T09:30:00Z",
+    "scheduled_at": null,
+    "sent_at": null,
+    "to_email": "jane@acme.com",
+    "reply_in_thread": true,
     "updated_at": "2025-11-11T15:00:00Z"
   },
   "metadata": {},
@@ -87,3 +115,7 @@ description: "Edit a scheduled email's subject, body, or send time (only if not 
 }
 ```
 </ResponseExample>
+
+<Note>
+  Only emails with status `draft` or `scheduled` can be updated. Once an email reaches `sending` or `sent` status, it cannot be modified.
+</Note>

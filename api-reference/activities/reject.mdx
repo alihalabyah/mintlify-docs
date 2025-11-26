@@ -1,7 +1,7 @@
 ---
 title: 'Reject Draft Email'
 api: 'POST /activities/:id/reject'
-description: 'Reject a draft email with an optional reason'
+description: 'Reject a draft email and trigger AI to generate a new alternative'
 ---
 
 ## Path Parameters
@@ -13,13 +13,13 @@ description: 'Reject a draft email with an optional reason'
 ## Body Parameters
 
 <ParamField body="reason" type="string">
-  Optional rejection reason for tracking
+  Optional rejection reason for tracking and AI learning
 </ParamField>
 
 <RequestExample>
 ```json
 {
-  "reason": "Email tone needs adjustment"
+  "reason": "Email tone is too formal, needs to be more casual and friendly"
 }
 ```
 </RequestExample>
@@ -43,23 +43,19 @@ description: 'Reject a draft email with an optional reason'
     </ResponseField>
     
     <ResponseField name="status" type="string" required>
-      Status (will be "rejected")
+      Status (will be `rejected`)
     </ResponseField>
     
-    <ResponseField name="subject" type="string">
-      Email subject
-    </ResponseField>
-    
-    <ResponseField name="due_at" type="string">
-      Original scheduled time
-    </ResponseField>
-    
-    <ResponseField name="rejected_at" type="string" required>
-      Rejection timestamp
+    <ResponseField name="is_approved" type="boolean">
+      Approval flag (will be false)
     </ResponseField>
     
     <ResponseField name="rejection_reason" type="string">
-      Rejection reason
+      User-provided rejection reason
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string" required>
+      Creation timestamp
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -70,15 +66,19 @@ description: 'Reject a draft email with an optional reason'
   "data": {
     "id": 321,
     "sequence_lead_id": 1001,
-    "activity_type": "draft_email",
+    "activity_type": "outgoing_email",
     "status": "rejected",
-    "subject": "Hi Jane — quick intro",
-    "due_at": "2025-11-11T08:00:00Z",
-    "rejected_at": "2025-11-10T17:00:00Z",
-    "rejection_reason": "Email tone needs adjustment"
+    "is_approved": false,
+    "outgoing_email_id": 9003,
+    "rejection_reason": "Email tone is too formal, needs to be more casual and friendly",
+    "created_at": "2025-11-10T15:00:00Z"
   },
   "metadata": {},
   "pagination": null
 }
 ```
 </ResponseExample>
+
+<Note>
+  After rejection, Workflow #4 (AI Next Action) is automatically triggered to generate a new draft email. The rejection reason is included in the AI context to help generate a better alternative.
+</Note>

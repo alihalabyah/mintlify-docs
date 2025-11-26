@@ -13,7 +13,11 @@ description: 'List all leads enrolled in a sequence with their status and statis
 ## Query Parameters
 
 <ParamField query="status" type="string">
-  Filter by lead status: `not_started`, `active`, `paused`, `finished`
+  Filter by lead status: `active`, `paused`, `finished`
+</ParamField>
+
+<ParamField query="detailed_status" type="string">
+  Filter by detailed status: `in_progress`, `completed`, `not_a_fit`, `no_further_action`
 </ParamField>
 
 ## Response
@@ -26,40 +30,40 @@ description: 'List all leads enrolled in a sequence with their status and statis
       Sequence lead ID
     </ResponseField>
     
+    <ResponseField name="sequence_id" type="integer" required>
+      Sequence ID
+    </ResponseField>
+    
     <ResponseField name="lead_id" type="integer" required>
-      Lead ID
-    </ResponseField>
-    
-    <ResponseField name="lead_name" type="string" required>
-      Lead's full name
-    </ResponseField>
-    
-    <ResponseField name="company" type="string">
-      Company name
+      Lead ID (reference to leads/people table)
     </ResponseField>
     
     <ResponseField name="status" type="string" required>
-      Current status
+      Current status: `active`, `paused`, `finished`
     </ResponseField>
     
-    <ResponseField name="latest_update" type="string">
-      Latest activity type
-    </ResponseField>
-    
-    <ResponseField name="introducers" type="array">
-      Array of introducer objects with lead_id and rank
+    <ResponseField name="detailed_status" type="string">
+      Detailed status: `in_progress`, `completed`, `not_a_fit`, `no_further_action`
     </ResponseField>
     
     <ResponseField name="next_followup_at" type="string">
-      Next scheduled follow-up timestamp
+      Next scheduled follow-up/reassessment timestamp
     </ResponseField>
     
-    <ResponseField name="last_sent_at" type="string">
-      Last outbound email timestamp
+    <ResponseField name="introducers" type="array">
+      Array of introducer objects: `[{"lead_id":501,"rank":1}]`
     </ResponseField>
     
-    <ResponseField name="last_inbound_at" type="string">
-      Last inbound email timestamp
+    <ResponseField name="lead_data" type="object">
+      Lead information from Postgres (name, company, email, etc.)
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string" required>
+      Enrollment timestamp
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
+      Last update timestamp
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -70,11 +74,11 @@ description: 'List all leads enrolled in a sequence with their status and statis
   "data": [
     {
       "id": 1001,
+      "sequence_id": 101,
       "lead_id": 501,
-      "lead_name": "Jane Doe",
-      "company": "Acme",
       "status": "active",
-      "latest_update": "email_sent",
+      "detailed_status": "in_progress",
+      "next_followup_at": "2025-11-15T10:00:00Z",
       "introducers": [
         {
           "lead_id": 742,
@@ -85,9 +89,14 @@ description: 'List all leads enrolled in a sequence with their status and statis
           "rank": 2
         }
       ],
-      "next_followup_at": "2025-11-15T10:00:00Z",
-      "last_sent_at": "2025-11-10T09:00:00Z",
-      "last_inbound_at": null
+      "lead_data": {
+        "name": "Jane Doe",
+        "company": "Acme Corp",
+        "email": "jane@acme.com",
+        "title": "VP Engineering"
+      },
+      "created_at": "2025-11-10T09:00:00Z",
+      "updated_at": "2025-11-14T15:30:00Z"
     }
   ],
   "metadata": {},

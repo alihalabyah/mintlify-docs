@@ -1,7 +1,7 @@
 ---
 title: 'Get Lead Email History'
 api: 'GET /sequences/:sequenceId/leads/:leadId/emails'
-description: 'Get complete email thread history (sent + received) for a specific lead'
+description: 'Get complete email history (outgoing + incoming) for a specific lead, organized by threads'
 ---
 
 ## Path Parameters
@@ -19,7 +19,21 @@ description: 'Get complete email thread history (sent + received) for a specific
 <ResponseField name="data" type="object">
   <Expandable title="Email History Object">
     <ResponseField name="lead" type="object" required>
-      Lead information (lead_id, lead_name, email)
+      Lead information
+      
+      <Expandable title="Lead Info">
+        <ResponseField name="lead_id" type="integer" required>
+          Lead ID
+        </ResponseField>
+        
+        <ResponseField name="sequence_lead_id" type="integer" required>
+          Sequence lead ID
+        </ResponseField>
+        
+        <ResponseField name="lead_data" type="object" required>
+          Lead information (name, email, company, etc.)
+        </ResponseField>
+      </Expandable>
     </ResponseField>
     
     <ResponseField name="email_threads" type="array" required>
@@ -27,11 +41,49 @@ description: 'Get complete email thread history (sent + received) for a specific
       
       <Expandable title="Thread Object">
         <ResponseField name="thread_id" type="string" required>
-          Thread identifier
+          Gmail thread ID
         </ResponseField>
         
         <ResponseField name="emails" type="array" required>
-          Array of emails in the thread (both outgoing and inbox)
+          Array of emails in chronological order
+          
+          <Expandable title="Email Item">
+            <ResponseField name="type" type="string" required>
+              Email type: `outgoing` or `incoming`
+            </ResponseField>
+            
+            <ResponseField name="id" type="integer" required>
+              Email ID (from email_outgoing or email_inbox)
+            </ResponseField>
+            
+            <ResponseField name="content" type="object">
+              Email content (outgoing) or body preview (incoming)
+            </ResponseField>
+            
+            <ResponseField name="from_email" type="string">
+              Sender email (for incoming)
+            </ResponseField>
+            
+            <ResponseField name="to_email" type="string">
+              Recipient email (for outgoing)
+            </ResponseField>
+            
+            <ResponseField name="sent_at" type="string">
+              Send timestamp (outgoing)
+            </ResponseField>
+            
+            <ResponseField name="received_at" type="string">
+              Received timestamp (incoming)
+            </ResponseField>
+            
+            <ResponseField name="status" type="string">
+              Email status (outgoing)
+            </ResponseField>
+            
+            <ResponseField name="type_detail" type="string">
+              Incoming email type: `replied`, `oof`, `bounced`, etc.
+            </ResponseField>
+          </Expandable>
         </ResponseField>
       </Expandable>
     </ResponseField>
@@ -44,55 +96,60 @@ description: 'Get complete email thread history (sent + received) for a specific
   "data": {
     "lead": {
       "lead_id": 501,
-      "lead_name": "Jane Doe",
-      "email": "jane@acme.com"
+      "sequence_lead_id": 1001,
+      "lead_data": {
+        "name": "Jane Doe",
+        "email": "jane@acme.com",
+        "company": "Acme Corp"
+      }
     },
     "email_threads": [
       {
-        "thread_id": "xx1",
+        "thread_id": "thread_xyz789",
         "emails": [
           {
-            "type": "email_outgoing",
+            "type": "outgoing",
             "id": 9001,
-            "subject": "Quick intro",
-            "from_email": "user@company.com",
+            "content": {
+              "subject": "Quick intro via Alice",
+              "body": "<p>Hi Jane,</p><p>Alice suggested I reach out...</p>"
+            },
             "to_email": "jane@acme.com",
-            "status": "sent",
             "sent_at": "2025-11-10T09:00:00Z",
-            "integration_thread_id": "thr-123"
-          }
-        ]
-      },
-      {
-        "thread_id": "xx2",
-        "emails": [
-          {
-            "type": "email_outgoing",
-            "id": 9002,
-            "subject": "Follow-up",
-            "from_email": "user@company.com",
-            "to_email": "jane@acme.com",
-            "status": "sent",
-            "sent_at": "2025-11-10T09:00:00Z",
-            "integration_thread_id": "thr-456"
+            "status": "sent"
           },
           {
-            "type": "email_inbox",
+            "type": "incoming",
             "id": 7001,
+            "content": {
+              "subject": "Re: Quick intro via Alice",
+              "body_preview": "Thanks for reaching out! I'd love to chat..."
+            },
             "from_email": "jane@acme.com",
             "received_at": "2025-11-10T09:05:00Z",
-            "body_preview": "Thanks for reaching out..."
+            "type_detail": "replied"
+          },
+          {
+            "type": "outgoing",
+            "id": 9002,
+            "content": {
+              "subject": "Re: Quick intro via Alice",
+              "body": "<p>Great to hear from you! How about Tuesday at 2pm?</p>"
+            },
+            "to_email": "jane@acme.com",
+            "sent_at": "2025-11-10T10:00:00Z",
+            "status": "sent"
           }
         ]
       }
     ]
   },
   "metadata": {},
-  "pagination": {
-    "cursor": null,
-    "has_more": false,
-    "count": 2
-  }
+  "pagination": null
 }
 ```
 </ResponseExample>
+
+<Note>
+  Emails are organized by `integration_thread_id` to show full conversation threads. Each thread contains both outgoing (from email_outgoing) and incoming (from email_inbox) messages in chronological order.
+</Note>

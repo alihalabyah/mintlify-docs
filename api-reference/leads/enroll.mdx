@@ -1,7 +1,7 @@
 ---
 title: 'Enroll Leads in Sequence'
 api: 'POST /sequences/:id/leads'
-description: 'Bulk enroll leads into a sequence'
+description: 'Bulk enroll leads into a sequence with initial status set to inactive'
 ---
 
 ## Path Parameters
@@ -16,15 +16,14 @@ description: 'Bulk enroll leads into a sequence'
   Array of lead IDs to enroll
 </ParamField>
 
-<ParamField body="integration_id" type="integer" required>
-  Mailbox integration ID to use for sending emails
+<ParamField body="lead_data" type="object">
+  Optional lead data to store (will be fetched from Postgres if not provided)
 </ParamField>
 
 <RequestExample>
 ```json
 {
-  "lead_ids": [501, 502, 503],
-  "integration_id": 42
+  "lead_ids": [501, 502, 503]
 }
 ```
 </RequestExample>
@@ -33,7 +32,7 @@ description: 'Bulk enroll leads into a sequence'
 
 <ResponseField name="data" type="object">
   <Expandable title="Enrollment Result">
-    <ResponseField name="sequence_id" type="string" required>
+    <ResponseField name="sequence_id" type="integer" required>
       Sequence ID
     </ResponseField>
     
@@ -43,6 +42,32 @@ description: 'Bulk enroll leads into a sequence'
     
     <ResponseField name="items" type="array" required>
       Array of enrolled lead objects
+      
+      <Expandable title="Enrolled Lead">
+        <ResponseField name="id" type="integer" required>
+          Sequence lead ID
+        </ResponseField>
+        
+        <ResponseField name="lead_id" type="integer" required>
+          Lead ID
+        </ResponseField>
+        
+        <ResponseField name="status" type="string" required>
+          Initial status (always `active`)
+        </ResponseField>
+        
+        <ResponseField name="next_followup_at" type="string" required>
+          Set to NOW() for immediate processing
+        </ResponseField>
+        
+        <ResponseField name="lead_data" type="object">
+          Lead information
+        </ResponseField>
+        
+        <ResponseField name="created_at" type="string" required>
+          Enrollment timestamp
+        </ResponseField>
+      </Expandable>
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -51,23 +76,31 @@ description: 'Bulk enroll leads into a sequence'
 ```json
 {
   "data": {
-    "sequence_id": "101",
+    "sequence_id": 101,
     "enrolled_count": 3,
     "items": [
       {
         "id": 1001,
         "lead_id": 501,
-        "lead_name": "Jane Doe",
-        "company": "Acme",
-        "status": "not_started",
+        "status": "active",
+        "next_followup_at": "2025-11-25T10:00:00Z",
+        "lead_data": {
+          "name": "Jane Doe",
+          "company": "Acme",
+          "email": "jane@acme.com"
+        },
         "created_at": "2025-11-25T10:00:00Z"
       },
       {
         "id": 1002,
         "lead_id": 502,
-        "lead_name": "John Smith",
-        "company": "TechCorp",
-        "status": "not_started",
+        "status": "active",
+        "next_followup_at": "2025-11-25T10:00:00Z",
+        "lead_data": {
+          "name": "John Smith",
+          "company": "TechCorp",
+          "email": "john@techcorp.com"
+        },
         "created_at": "2025-11-25T10:00:00Z"
       }
     ]
@@ -77,3 +110,7 @@ description: 'Bulk enroll leads into a sequence'
 }
 ```
 </ResponseExample>
+
+<Note>
+  After enrollment, leads have `status='active'` and `next_followup_at=NOW()` to trigger immediate AI planning. Introducers should be assigned via the Update Sequence Lead endpoint to set the lead to active status.
+</Note>

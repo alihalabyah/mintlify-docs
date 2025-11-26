@@ -1,7 +1,7 @@
 ---
 title: 'Update Draft Activity'
 api: 'PATCH /activities/:id'
-description: 'Update the subject, body, or due time of a draft activity'
+description: 'Update the email content or scheduled time of a pending draft activity'
 ---
 
 ## Path Parameters
@@ -16,7 +16,7 @@ description: 'Update the subject, body, or due time of a draft activity'
   Updated email subject
 </ParamField>
 
-<ParamField body="body_html" type="string">
+<ParamField body="body" type="string">
   Updated email body (HTML)
 </ParamField>
 
@@ -28,7 +28,7 @@ description: 'Update the subject, body, or due time of a draft activity'
 ```json
 {
   "subject": "Updated subject",
-  "body_html": "<p>Updated content...</p>",
+  "body": "<p>Updated content...</p>",
   "due_at": "2025-11-11T10:00:00Z"
 }
 ```
@@ -37,39 +37,33 @@ description: 'Update the subject, body, or due time of a draft activity'
 ## Response
 
 <ResponseField name="data" type="object">
-  Updated activity object
+  Updated activity and email objects
   
-  <Expandable title="Activity Object">
-    <ResponseField name="id" type="integer" required>
-      Activity ID
+  <Expandable title="Update Result">
+    <ResponseField name="activity" type="object" required>
+      Updated activity object
     </ResponseField>
     
-    <ResponseField name="sequence_lead_id" type="integer" required>
-      Sequence lead ID
-    </ResponseField>
-    
-    <ResponseField name="activity_type" type="string" required>
-      Activity type
-    </ResponseField>
-    
-    <ResponseField name="status" type="string" required>
-      Activity status
-    </ResponseField>
-    
-    <ResponseField name="subject" type="string">
-      Email subject
-    </ResponseField>
-    
-    <ResponseField name="body_html" type="string">
-      Email body
-    </ResponseField>
-    
-    <ResponseField name="due_at" type="string">
-      Scheduled time
-    </ResponseField>
-    
-    <ResponseField name="updated_at" type="string" required>
-      Last update timestamp
+    <ResponseField name="email" type="object" required>
+      Associated email_outgoing record with updated content
+      
+      <Expandable title="Email Object">
+        <ResponseField name="id" type="integer" required>
+          Email ID
+        </ResponseField>
+        
+        <ResponseField name="content" type="object" required>
+          Updated email content (subject, body)
+        </ResponseField>
+        
+        <ResponseField name="due_at" type="string">
+          Updated scheduled time
+        </ResponseField>
+        
+        <ResponseField name="updated_at" type="string" required>
+          Last update timestamp
+        </ResponseField>
+      </Expandable>
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -78,17 +72,32 @@ description: 'Update the subject, body, or due time of a draft activity'
 ```json
 {
   "data": {
-    "id": 321,
-    "sequence_lead_id": 1001,
-    "activity_type": "draft_email",
-    "status": "pending",
-    "subject": "Updated subject",
-    "body_html": "<p>Updated content...</p>",
-    "due_at": "2025-11-11T10:00:00Z",
-    "updated_at": "2025-11-10T16:00:00Z"
+    "activity": {
+      "id": 321,
+      "sequence_lead_id": 1001,
+      "activity_type": "outgoing_email",
+      "status": "pending",
+      "outgoing_email_id": 9003,
+      "due_at": "2025-11-11T10:00:00Z"
+    },
+    "email": {
+      "id": 9003,
+      "sequence_lead_id": 1001,
+      "status": "draft",
+      "content": {
+        "subject": "Updated subject",
+        "body": "<p>Updated content...</p>"
+      },
+      "due_at": "2025-11-11T10:00:00Z",
+      "updated_at": "2025-11-10T16:00:00Z"
+    }
   },
   "metadata": {},
   "pagination": null
 }
 ```
 </ResponseExample>
+
+<Note>
+  Users can iterate on drafts multiple times before approving. Each update modifies the associated `email_outgoing` record while keeping the activity in `pending` status.
+</Note>

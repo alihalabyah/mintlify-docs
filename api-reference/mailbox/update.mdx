@@ -29,7 +29,11 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
 </ParamField>
 
 <ParamField body="status" type="string">
-  Integration status: "connected", "paused"
+  Integration status: `connected`, `disconnected`, `failed`
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Additional metadata for the integration (JSON)
 </ParamField>
 
 <RequestExample>
@@ -39,7 +43,7 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
   "per_hour": 20,
   "min_delay_seconds": 600,
   "timezone": "Africa/Cairo",
-  "status": "paused"
+  "status": "connected"
 }
 ```
 </RequestExample>
@@ -63,7 +67,7 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
     </ResponseField>
     
     <ResponseField name="status" type="string" required>
-      Updated connection status
+      Connection status: `connected`, `disconnected`, `failed`
     </ResponseField>
     
     <ResponseField name="authorized_gmail" type="boolean" required>
@@ -85,6 +89,10 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
     <ResponseField name="timezone" type="string" required>
       Timezone identifier
     </ResponseField>
+    
+    <ResponseField name="metadata" type="object">
+      Additional metadata
+    </ResponseField>
   </Expandable>
 </ResponseField>
 
@@ -95,12 +103,13 @@ description: 'Update rate limits, timezone, or status for a mailbox integration'
     "id": 42,
     "type": "gmail",
     "account_identifier": "user@company.com",
-    "status": "paused",
+    "status": "connected",
     "authorized_gmail": true,
     "per_day": 200,
     "per_hour": 20,
     "min_delay_seconds": 600,
-    "timezone": "Africa/Cairo"
+    "timezone": "Africa/Cairo",
+    "metadata": {}
   },
   "metadata": {},
   "pagination": null

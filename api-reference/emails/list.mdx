@@ -1,7 +1,7 @@
 ---
 title: 'List Sequence Emails'
 api: 'GET /sequences/:id/emails'
-description: 'List all sent and scheduled emails for a sequence'
+description: 'List all outgoing emails (draft, scheduled, and sent) for a sequence'
 ---
 
 ## Path Parameters
@@ -13,13 +13,17 @@ description: 'List all sent and scheduled emails for a sequence'
 ## Query Parameters
 
 <ParamField query="status" type="string">
-  Filter by email status: `scheduled`, `sent`, `failed`
+  Filter by email status: `draft`, `scheduled`, `sending`, `sent`, `failed`
+</ParamField>
+
+<ParamField query="sequence_lead_id" type="integer">
+  Filter by specific sequence lead
 </ParamField>
 
 ## Response
 
 <ResponseField name="data" type="array">
-  Array of email objects
+  Array of email_outgoing objects
   
   <Expandable title="Email Object">
     <ResponseField name="id" type="integer" required>
@@ -30,28 +34,60 @@ description: 'List all sent and scheduled emails for a sequence'
       Sequence lead ID
     </ResponseField>
     
+    <ResponseField name="sequence_lead_activity_id" type="integer" required>
+      Associated activity ID
+    </ResponseField>
+    
     <ResponseField name="integration_id" type="integer" required>
-      Mailbox integration ID used
+      Mailbox integration ID used for sending
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Email status: `draft`, `scheduled`, `sending`, `sent`, `failed`
+    </ResponseField>
+    
+    <ResponseField name="due_at" type="string">
+      When the email should be sent
+    </ResponseField>
+    
+    <ResponseField name="scheduled_at" type="string">
+      When the email was actually scheduled (after rate limiting)
+    </ResponseField>
+    
+    <ResponseField name="sent_at" type="string">
+      When the email was successfully sent
+    </ResponseField>
+    
+    <ResponseField name="content" type="object" required>
+      Email content (subject, body, etc.)
+    </ResponseField>
+    
+    <ResponseField name="reply_in_thread" type="boolean" required>
+      Whether to reply in existing thread
     </ResponseField>
     
     <ResponseField name="to_email" type="string" required>
       Recipient email address
     </ResponseField>
     
-    <ResponseField name="subject" type="string" required>
-      Email subject
+    <ResponseField name="cc_emails" type="array">
+      CC recipients (JSON array)
     </ResponseField>
     
-    <ResponseField name="status" type="string" required>
-      Email status
+    <ResponseField name="integration_message_id" type="string">
+      Gmail message ID (set after sending)
     </ResponseField>
     
-    <ResponseField name="scheduled_at" type="string">
-      Scheduled send time
+    <ResponseField name="integration_thread_id" type="string">
+      Gmail thread ID (set after sending)
     </ResponseField>
     
-    <ResponseField name="sent_at" type="string">
-      Actual send time
+    <ResponseField name="created_at" type="string" required>
+      Creation timestamp
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
+      Last update timestamp
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -63,12 +99,23 @@ description: 'List all sent and scheduled emails for a sequence'
     {
       "id": 9001,
       "sequence_lead_id": 1001,
+      "sequence_lead_activity_id": 320,
       "integration_id": 42,
-      "to_email": "jane@acme.com",
-      "subject": "Quick intro",
       "status": "sent",
-      "scheduled_at": null,
-      "sent_at": "2025-11-10T09:00:00Z"
+      "due_at": "2025-11-10T09:00:00Z",
+      "scheduled_at": "2025-11-10T09:00:00Z",
+      "sent_at": "2025-11-10T09:00:15Z",
+      "content": {
+        "subject": "Quick intro via Alice",
+        "body": "<p>Hi Jane,</p><p>Alice suggested I reach out...</p>"
+      },
+      "reply_in_thread": true,
+      "to_email": "jane@acme.com",
+      "cc_emails": null,
+      "integration_message_id": "msg_abc123",
+      "integration_thread_id": "thread_xyz789",
+      "created_at": "2025-11-09T15:00:00Z",
+      "updated_at": "2025-11-10T09:00:15Z"
     }
   ],
   "metadata": {},

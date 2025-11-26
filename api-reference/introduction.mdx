@@ -1,11 +1,21 @@
 ---
 title: 'API Reference'
-description: 'Complete API documentation for the AIS platform'
+description: 'Complete API documentation for AI Sequences - automated email outreach platform'
 ---
 
-## Welcome
+## Overview
 
-This API reference provides comprehensive documentation for all AIS platform endpoints. The API follows RESTful principles and uses standard HTTP methods.
+AI Sequences is an automated email outreach system that helps users manage personalized, multi-step email campaigns with AI-powered drafting and intelligent follow-ups. The system handles sequence creation, lead enrollment, email composition, human-in-the-loop approval, rate-limited sending, and reply processing.
+
+## Key Capabilities
+
+- **Mailbox Integration:** Gmail OAuth for secure email sending
+- **Template-Based Sequences:** Create reusable email templates and workflows
+- **AI-Powered Drafting:** Intelligent email generation based on context and conversation history
+- **Human-in-the-Loop Approval:** Review and edit AI-generated drafts before sending
+- **Rate-Limited Delivery:** Respect email provider limits with configurable pacing
+- **Thread-Aware Processing:** Track replies and maintain conversation context
+- **Engagement Tracking:** Monitor opens, clicks, and replies
 
 ## Base URL
 
@@ -20,6 +30,26 @@ All API endpoints require authentication using Bearer tokens in the Authorizatio
 ```bash
 Authorization: Bearer YOUR_API_TOKEN
 ```
+
+## Core Workflows
+
+### 1. Sequence Creation & Activation
+Create sequences, enroll leads, assign introducers, and activate for execution.
+
+### 2. Sequence Execution (CRON)
+Automated background process that evaluates due leads and triggers AI planning.
+
+### 3. Incoming Email Processing
+Webhook-driven reply matching and conversation state updates.
+
+### 4. AI Next Action
+AI evaluates conversation history and determines the best next step (send email or finish).
+
+### 5. User Activity Approval
+Human review and editing of AI-generated email drafts.
+
+### 6. Email Sending
+Rate-limited, scheduled email delivery with tracking.
 
 ## Error Handling
 
@@ -79,3 +109,21 @@ All successful responses follow this structure:
   }
 }
 ```
+
+## Rate Limiting
+
+API endpoints respect the following rate limits:
+
+- **Per mailbox configuration:** Configurable via integration settings
+- **Default limits:** 200 emails/day, 20 emails/hour, 10 minutes minimum delay
+- **Rate limit headers:** Returned in response headers when applicable
+
+## Webhook Events
+
+The system supports webhooks for:
+
+- **Incoming emails:** Real-time notification of replies
+- **Email engagement:** Opens, clicks, bounces
+- **Sequence events:** Lead status changes, completions
+
+See the Webhooks section for implementation details.

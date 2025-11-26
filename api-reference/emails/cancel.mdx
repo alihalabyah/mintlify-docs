@@ -1,7 +1,7 @@
 ---
 title: 'Cancel Scheduled Email'
 api: 'DELETE /emails/:id'
-description: 'Cancel a scheduled email (sets status to canceled)'
+description: 'Cancel a scheduled email by setting status to failed with cancellation metadata'
 ---
 
 ## Path Parameters
@@ -24,19 +24,19 @@ description: 'Cancel a scheduled email (sets status to canceled)'
       Sequence lead ID
     </ResponseField>
     
-    <ResponseField name="subject" type="string" required>
-      Email subject
+    <ResponseField name="status" type="string" required>
+      Status (will be `failed`)
     </ResponseField>
     
-    <ResponseField name="status" type="string" required>
-      Status (will be "canceled")
+    <ResponseField name="content" type="object" required>
+      Email content (preserved)
     </ResponseField>
     
     <ResponseField name="due_at" type="string">
       Original scheduled time
     </ResponseField>
     
-    <ResponseField name="canceled_at" type="string" required>
+    <ResponseField name="updated_at" type="string" required>
       Cancellation timestamp
     </ResponseField>
   </Expandable>
@@ -48,13 +48,26 @@ description: 'Cancel a scheduled email (sets status to canceled)'
   "data": {
     "id": 9002,
     "sequence_lead_id": 1001,
-    "subject": "Updated subject",
-    "status": "canceled",
+    "sequence_lead_activity_id": 321,
+    "integration_id": 42,
+    "status": "failed",
+    "content": {
+      "subject": "Original subject",
+      "body": "<p>Original content...</p>",
+      "cancellation_reason": "User canceled"
+    },
     "due_at": "2025-11-12T09:30:00Z",
-    "canceled_at": "2025-11-11T16:00:00Z"
+    "scheduled_at": null,
+    "sent_at": null,
+    "to_email": "jane@acme.com",
+    "updated_at": "2025-11-11T16:00:00Z"
   },
   "metadata": {},
   "pagination": null
 }
 ```
 </ResponseExample>
+
+<Note>
+  Cancellation sets the email status to `failed` with metadata indicating user cancellation. The associated activity record remains in the system for audit purposes.
+</Note>

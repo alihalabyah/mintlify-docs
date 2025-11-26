@@ -17,7 +17,7 @@ description: "Update a lead's introducers, status, or next follow-up time"
 ## Body Parameters
 
 <ParamField body="introducers" type="array">
-  Array of introducer objects
+  Array of introducer objects with lead_id and rank
   
   <Expandable title="Introducer Object">
     <ParamField body="lead_id" type="integer" required>
@@ -25,17 +25,25 @@ description: "Update a lead's introducers, status, or next follow-up time"
     </ParamField>
     
     <ParamField body="rank" type="integer" required>
-      Priority rank (1 is highest)
+      Priority rank (1 is highest priority)
     </ParamField>
   </Expandable>
 </ParamField>
 
 <ParamField body="status" type="string">
-  Lead status: `not_started`, `active`, `paused`, `finished`
+  Lead status: `active`, `paused`, `finished`
+</ParamField>
+
+<ParamField body="detailed_status" type="string">
+  Detailed status: `in_progress`, `completed`, `not_a_fit`, `no_further_action`
 </ParamField>
 
 <ParamField body="next_followup_at" type="string">
-  Next follow-up timestamp (ISO 8601)
+  Next follow-up/reassessment timestamp (ISO 8601)
+</ParamField>
+
+<ParamField body="lead_data" type="object">
+  Update lead information stored in JSON field
 </ParamField>
 
 <RequestExample>
@@ -68,11 +76,11 @@ description: "Update a lead's introducers, status, or next follow-up time"
 {
   "data": {
     "id": 1001,
+    "sequence_id": 101,
     "lead_id": 501,
-    "lead_name": "Jane Doe",
-    "company": "Acme",
     "status": "active",
-    "latest_update": "email_sent",
+    "detailed_status": "in_progress",
+    "next_followup_at": "2025-11-15T10:00:00Z",
     "introducers": [
       {
         "lead_id": 742,
@@ -83,7 +91,12 @@ description: "Update a lead's introducers, status, or next follow-up time"
         "rank": 2
       }
     ],
-    "next_followup_at": "2025-11-15T10:00:00Z",
+    "lead_data": {
+      "name": "Jane Doe",
+      "company": "Acme",
+      "email": "jane@acme.com"
+    },
+    "created_at": "2025-11-10T09:00:00Z",
     "updated_at": "2025-11-25T11:00:00Z"
   },
   "metadata": {},
@@ -91,3 +104,7 @@ description: "Update a lead's introducers, status, or next follow-up time"
 }
 ```
 </ResponseExample>
+
+<Note>
+  Setting `status='active'` with introducers assigned will trigger the AI planning workflow during the next CRON execution cycle.
+</Note>

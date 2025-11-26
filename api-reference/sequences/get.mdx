@@ -20,32 +20,28 @@ description: 'Load a specific sequence with all configuration details'
       Sequence ID
     </ResponseField>
     
+    <ResponseField name="user_id" type="integer" required>
+      Owner user ID
+    </ResponseField>
+    
     <ResponseField name="name" type="string" required>
       Sequence name
     </ResponseField>
     
+    <ResponseField name="description" type="string">
+      Sequence description
+    </ResponseField>
+    
     <ResponseField name="status" type="string" required>
-      Current status
+      Current status: `draft`, `active`, `paused`, `archived`
     </ResponseField>
     
-    <ResponseField name="lead_context" type="string" required>
-      User/sender context
+    <ResponseField name="instructions" type="string" required>
+      AI instructions playbook
     </ResponseField>
     
-    <ResponseField name="context" type="string">
-      Additional context
-    </ResponseField>
-    
-    <ResponseField name="instruction" type="string" required>
-      AI instructions
-    </ResponseField>
-    
-    <ResponseField name="templates" type="array" required>
+    <ResponseField name="email_templates" type="array" required>
       Email templates
-    </ResponseField>
-    
-    <ResponseField name="notes" type="string">
-      Internal notes
     </ResponseField>
     
     <ResponseField name="created_at" type="string" required>
@@ -63,19 +59,18 @@ description: 'Load a specific sequence with all configuration details'
 {
   "data": {
     "id": 201,
+    "user_id": 15,
     "name": "Outbound – Cold V1",
+    "description": "Initial outreach sequence",
     "status": "draft",
-    "lead_context": "<your_profile> Name: Abdallah Absi...",
-    "context": "...",
-    "instruction": "High-level rules...",
-    "templates": [
+    "instructions": "Start with introducer mention...",
+    "email_templates": [
       {
         "name": "Step 1 - Intro",
         "subject": "Quick intro",
         "body": "<p>...</p>"
       }
     ],
-    "notes": "internal notes",
     "created_at": "2025-11-25T10:00:00Z",
     "updated_at": "2025-11-25T10:00:00Z"
   },

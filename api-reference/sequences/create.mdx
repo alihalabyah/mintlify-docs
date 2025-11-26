@@ -1,28 +1,24 @@
 ---
 title: 'Create Sequence'
 api: 'POST /sequences'
-description: 'Create a new sequence with instructions, templates, and context'
+description: 'Create a new sequence with instructions and email templates'
 ---
 
 ## Body Parameters
 
 <ParamField body="name" type="string" required>
-  Sequence name
+  Sequence name (max 200 characters)
 </ParamField>
 
-<ParamField body="instruction" type="string" required>
-  High-level instructions for the AI agent
+<ParamField body="description" type="string">
+  Optional description of the sequence
 </ParamField>
 
-<ParamField body="lead_context" type="string" required>
-  Context about the user/sender (profile, experience, etc.)
+<ParamField body="instructions" type="string" required>
+  Free-text playbook with high-level instructions for the AI (e.g., "ask introducer, then follow up...")
 </ParamField>
 
-<ParamField body="context" type="string">
-  Additional context for personalization
-</ParamField>
-
-<ParamField body="templates" type="array" required>
+<ParamField body="email_templates" type="array" required>
   Array of email template objects
   
   <Expandable title="Template Object">
@@ -40,25 +36,24 @@ description: 'Create a new sequence with instructions, templates, and context'
   </Expandable>
 </ParamField>
 
-<ParamField body="notes" type="string">
-  Internal notes
-</ParamField>
-
 <RequestExample>
 ```json
 {
   "name": "Outbound – Cold V1",
-  "instruction": "High-level rules...",
-  "lead_context": "<your_profile> Name: Abdallah Absi Work Experience: 1. CEO at Village (village.ai), Jan 2022 - Present",
-  "context": "...",
-  "templates": [
+  "description": "Initial outreach sequence for cold leads",
+  "instructions": "Start with introducer mention, highlight mutual connection value, ask for intro call. Follow up after 3 days if no response.",
+  "email_templates": [
     {
       "name": "Step 1 - Intro",
-      "subject": "Quick intro",
-      "body": "<p>...</p>"
+      "subject": "Quick intro via {{introducer_name}}",
+      "body": "<p>Hi {{lead_name}},</p><p>{{introducer_name}} suggested I reach out...</p>"
+    },
+    {
+      "name": "Step 2 - Follow-up",
+      "subject": "Re: Quick intro",
+      "body": "<p>Following up on my previous email...</p>"
     }
-  ],
-  "notes": "internal notes"
+  ]
 }
 ```
 </RequestExample>
@@ -73,40 +68,36 @@ description: 'Create a new sequence with instructions, templates, and context'
       Sequence ID
     </ResponseField>
     
+    <ResponseField name="user_id" type="integer" required>
+      Owner user ID
+    </ResponseField>
+    
     <ResponseField name="name" type="string" required>
       Sequence name
     </ResponseField>
     
+    <ResponseField name="description" type="string">
+      Sequence description
+    </ResponseField>
+    
     <ResponseField name="status" type="string" required>
-      Initial status (always "draft")
+      Initial status (always `draft`)
     </ResponseField>
     
-    <ResponseField name="instruction" type="string" required>
-      AI instructions
+    <ResponseField name="instructions" type="string" required>
+      AI instructions playbook
     </ResponseField>
     
-    <ResponseField name="lead_context" type="string" required>
-      User context
-    </ResponseField>
-    
-    <ResponseField name="context" type="string">
-      Additional context
-    </ResponseField>
-    
-    <ResponseField name="templates" type="array" required>
-      Email templates
-    </ResponseField>
-    
-    <ResponseField name="notes" type="string">
-      Internal notes
+    <ResponseField name="email_templates" type="array" required>
+      Email templates array
     </ResponseField>
     
     <ResponseField name="created_at" type="string" required>
-      Creation timestamp
+      Creation timestamp (ISO 8601)
     </ResponseField>
     
     <ResponseField name="updated_at" type="string" required>
-      Last update timestamp
+      Last update timestamp (ISO 8601)
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -116,19 +107,23 @@ description: 'Create a new sequence with instructions, templates, and context'
 {
   "data": {
     "id": 201,
+    "user_id": 15,
     "name": "Outbound – Cold V1",
+    "description": "Initial outreach sequence for cold leads",
     "status": "draft",
-    "instruction": "High-level rules...",
-    "lead_context": "<your_profile> Name: Abdallah Absi...",
-    "context": "...",
-    "templates": [
+    "instructions": "Start with introducer mention, highlight mutual connection value, ask for intro call. Follow up after 3 days if no response.",
+    "email_templates": [
       {
         "name": "Step 1 - Intro",
-        "subject": "Quick intro",
-        "body": "<p>...</p>"
+        "subject": "Quick intro via {{introducer_name}}",
+        "body": "<p>Hi {{lead_name}},</p><p>{{introducer_name}} suggested I reach out...</p>"
+      },
+      {
+        "name": "Step 2 - Follow-up",
+        "subject": "Re: Quick intro",
+        "body": "<p>Following up on my previous email...</p>"
       }
     ],
-    "notes": "internal notes",
     "created_at": "2025-11-25T10:00:00Z",
     "updated_at": "2025-11-25T10:00:00Z"
   },

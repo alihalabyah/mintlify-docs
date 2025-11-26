@@ -1,7 +1,7 @@
 ---
 title: 'Approve Draft Email'
 api: 'POST /activities/:id/approve'
-description: 'Approve a draft email and schedule it for sending'
+description: 'Approve an outgoing email activity and schedule it for sending'
 ---
 
 ## Path Parameters
@@ -12,24 +12,32 @@ description: 'Approve a draft email and schedule it for sending'
 
 ## Body Parameters
 
-<ParamField body="subject" type="string">
-  Optional: Override email subject before approval
-</ParamField>
-
-<ParamField body="body_html" type="string">
-  Optional: Override email body before approval
-</ParamField>
-
-<ParamField body="due_at" type="string">
-  Optional: Override scheduled time before approval (ISO 8601)
+<ParamField body="modifications" type="object">
+  Optional modifications to apply before approval (will update the associated email_outgoing record)
+  
+  <Expandable title="Modification Options">
+    <ParamField body="subject" type="string">
+      Override email subject
+    </ParamField>
+    
+    <ParamField body="body" type="string">
+      Override email body (HTML)
+    </ParamField>
+    
+    <ParamField body="due_at" type="string">
+      Override scheduled send time (ISO 8601)
+    </ParamField>
+  </Expandable>
 </ParamField>
 
 <RequestExample>
 ```json
 {
-  "subject": "Final subject",
-  "body_html": "<p>Final content...</p>",
-  "due_at": "2025-11-11T09:00:00Z"
+  "modifications": {
+    "subject": "Final subject line",
+    "body": "<p>Finalized email content...</p>",
+    "due_at": "2025-11-11T09:00:00Z"
+  }
 }
 ```
 </RequestExample>
@@ -39,7 +47,7 @@ description: 'Approve a draft email and schedule it for sending'
 <ResponseField name="data" type="object">
   <Expandable title="Approval Result">
     <ResponseField name="activity" type="object" required>
-      Updated activity object with approval status
+      Updated activity object
       
       <Expandable title="Activity Object">
         <ResponseField name="id" type="integer" required>
@@ -47,21 +55,21 @@ description: 'Approve a draft email and schedule it for sending'
         </ResponseField>
         
         <ResponseField name="status" type="string" required>
-          Status (will be "approved")
+          Status (will be `approved`)
         </ResponseField>
         
         <ResponseField name="is_approved" type="boolean" required>
           Approval flag (will be true)
         </ResponseField>
         
-        <ResponseField name="approved_at" type="string" required>
-          Approval timestamp
+        <ResponseField name="executed_at" type="string">
+          Set when email is actually sent
         </ResponseField>
       </Expandable>
     </ResponseField>
     
     <ResponseField name="email" type="object" required>
-      Created email object
+      Associated email_outgoing record updated to scheduled status
       
       <Expandable title="Email Object">
         <ResponseField name="id" type="integer" required>
@@ -73,19 +81,15 @@ description: 'Approve a draft email and schedule it for sending'
         </ResponseField>
         
         <ResponseField name="status" type="string" required>
-          Email status
+          Email status (will be `scheduled`)
         </ResponseField>
         
-        <ResponseField name="subject" type="string" required>
-          Email subject
+        <ResponseField name="content" type="object" required>
+          Email content (subject, body)
         </ResponseField>
         
         <ResponseField name="due_at" type="string" required>
           Scheduled send time
-        </ResponseField>
-        
-        <ResponseField name="created_at" type="string" required>
-          Creation timestamp
         </ResponseField>
       </Expandable>
     </ResponseField>
@@ -98,17 +102,24 @@ description: 'Approve a draft email and schedule it for sending'
   "data": {
     "activity": {
       "id": 321,
+      "sequence_lead_id": 1001,
       "status": "approved",
       "is_approved": true,
-      "approved_at": "2025-11-10T17:00:00Z"
+      "executed_at": null,
+      "created_at": "2025-11-10T15:00:00Z"
     },
     "email": {
       "id": 9003,
       "sequence_lead_id": 1001,
-      "status": "approved",
-      "subject": "Final subject",
+      "sequence_lead_activity_id": 321,
+      "integration_id": 42,
+      "status": "scheduled",
+      "content": {
+        "subject": "Final subject line",
+        "body": "<p>Finalized email content...</p>"
+      },
       "due_at": "2025-11-11T09:00:00Z",
-      "created_at": "2025-11-10T17:00:00Z"
+      "to_email": "jane@acme.com"
     }
   },
   "metadata": {},
@@ -116,3 +127,7 @@ description: 'Approve a draft email and schedule it for sending'
 }
 ```
 </ResponseExample>
+
+<Note>
+  After approval, the email enters the sending queue and will be processed by the email sending workflow (Workflow #6) which applies rate limits and schedules actual delivery.
+</Note>

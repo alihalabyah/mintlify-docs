@@ -1,7 +1,7 @@
 ---
 title: 'Remove Lead from Sequence'
 api: 'DELETE /sequences/:sequenceId/leads/:leadId'
-description: 'Remove a lead from a sequence (soft delete)'
+description: 'Remove a lead from a sequence by setting status to finished'
 ---
 
 ## Path Parameters
@@ -17,38 +17,38 @@ description: 'Remove a lead from a sequence (soft delete)'
 ## Response
 
 <ResponseField name="data" type="object">
-  Removed lead object with removal timestamp
+  Updated lead object with status set to finished
   
   <Expandable title="Removed Lead Object">
     <ResponseField name="id" type="integer" required>
       Sequence lead ID
     </ResponseField>
     
+    <ResponseField name="sequence_id" type="integer" required>
+      Sequence ID
+    </ResponseField>
+    
     <ResponseField name="lead_id" type="integer" required>
       Lead ID
     </ResponseField>
     
-    <ResponseField name="lead_name" type="string" required>
-      Lead name
-    </ResponseField>
-    
-    <ResponseField name="company" type="string">
-      Company name
-    </ResponseField>
-    
     <ResponseField name="status" type="string" required>
-      Status (will be "finished")
+      Status (will be `finished`)
     </ResponseField>
     
-    <ResponseField name="detailed_status" type="string" required>
-      Detailed status (will be "removed")
+    <ResponseField name="detailed_status" type="string">
+      Detailed status (will be `no_further_action`)
     </ResponseField>
     
     <ResponseField name="introducers" type="array">
-      Introducer list
+      Introducer list (preserved)
     </ResponseField>
     
-    <ResponseField name="removed_at" type="string" required>
+    <ResponseField name="lead_data" type="object">
+      Lead information
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
       Removal timestamp
     </ResponseField>
   </Expandable>
@@ -59,21 +59,30 @@ description: 'Remove a lead from a sequence (soft delete)'
 {
   "data": {
     "id": 1001,
+    "sequence_id": 101,
     "lead_id": 501,
-    "lead_name": "Jane Doe",
-    "company": "Acme",
     "status": "finished",
-    "detailed_status": "removed",
+    "detailed_status": "no_further_action",
     "introducers": [
       {
         "lead_id": 742,
         "rank": 1
       }
     ],
-    "removed_at": "2025-11-25T12:00:00Z"
+    "lead_data": {
+      "name": "Jane Doe",
+      "company": "Acme",
+      "email": "jane@acme.com"
+    },
+    "created_at": "2025-11-10T09:00:00Z",
+    "updated_at": "2025-11-25T12:00:00Z"
   },
   "metadata": {},
   "pagination": null
 }
 ```
 </ResponseExample>
+
+<Note>
+  This is a soft delete. The record remains in the database with `status='finished'` and `detailed_status='no_further_action'`. No further automated actions will be taken for this lead.
+</Note>
