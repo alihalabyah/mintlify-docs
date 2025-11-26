@@ -85,8 +85,7 @@
               "api-reference/emails/list",
               "api-reference/emails/history",
               "api-reference/emails/update",
-              "api-reference/emails/cancel",
-              "api-reference/emails/engagement"
+              "api-reference/emails/cancel"
             ]
           },
           {

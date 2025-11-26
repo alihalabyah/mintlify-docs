@@ -1,7 +1,7 @@
 ---
-title: 'Reject Draft Email'
+title: 'Reject Activity'
 api: 'POST /activities/:id/reject'
-description: 'Reject a draft email and trigger AI to generate a new alternative'
+description: 'Reject an activity and trigger AI to generate a new alternative'
 ---
 
 ## Path Parameters
@@ -80,5 +80,5 @@ description: 'Reject a draft email and trigger AI to generate a new alternative'
 </ResponseExample>
 
 <Note>
-  After rejection, Workflow #4 (AI Next Action) is automatically triggered to generate a new draft email. The rejection reason is included in the AI context to help generate a better alternative.
+  After rejection, Workflow #4 (AI Next Action) is automatically triggered to generate a new alternative. The rejection reason is included in the AI context to help generate a better alternative.
 </Note>

@@ -1,7 +1,7 @@
 ---
-title: 'Update Draft Activity'
+title: 'Update Activity'
 api: 'PATCH /activities/:id'
-description: 'Update the email content or scheduled time of a pending draft activity'
+description: 'Update the content or scheduled time of a pending activity'
 ---
 
 ## Path Parameters
@@ -13,11 +13,11 @@ description: 'Update the email content or scheduled time of a pending draft acti
 ## Body Parameters
 
 <ParamField body="subject" type="string">
-  Updated email subject
+  Updated email subject (for outgoing_email activities)
 </ParamField>
 
 <ParamField body="body" type="string">
-  Updated email body (HTML)
+  Updated email body HTML (for outgoing_email activities)
 </ParamField>
 
 <ParamField body="due_at" type="string">
