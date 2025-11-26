@@ -1,0 +1,79 @@
+---
+title: 'Enroll Leads in Sequence'
+api: 'POST /sequences/:id/leads'
+description: 'Bulk enroll leads into a sequence'
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Sequence ID
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="lead_ids" type="array" required>
+  Array of lead IDs to enroll
+</ParamField>
+
+<ParamField body="integration_id" type="integer" required>
+  Mailbox integration ID to use for sending emails
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "lead_ids": [501, 502, 503],
+  "integration_id": 42
+}
+```
+</RequestExample>
+
+## Response
+
+<ResponseField name="data" type="object">
+  <Expandable title="Enrollment Result">
+    <ResponseField name="sequence_id" type="string" required>
+      Sequence ID
+    </ResponseField>
+    
+    <ResponseField name="enrolled_count" type="integer" required>
+      Number of leads successfully enrolled
+    </ResponseField>
+    
+    <ResponseField name="items" type="array" required>
+      Array of enrolled lead objects
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "sequence_id": "101",
+    "enrolled_count": 3,
+    "items": [
+      {
+        "id": 1001,
+        "lead_id": 501,
+        "lead_name": "Jane Doe",
+        "company": "Acme",
+        "status": "not_started",
+        "created_at": "2025-11-25T10:00:00Z"
+      },
+      {
+        "id": 1002,
+        "lead_id": 502,
+        "lead_name": "John Smith",
+        "company": "TechCorp",
+        "status": "not_started",
+        "created_at": "2025-11-25T10:00:00Z"
+      }
+    ]
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>

@@ -1,0 +1,118 @@
+---
+title: 'Approve Draft Email'
+api: 'POST /activities/:id/approve'
+description: 'Approve a draft email and schedule it for sending'
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Activity ID
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="subject" type="string">
+  Optional: Override email subject before approval
+</ParamField>
+
+<ParamField body="body_html" type="string">
+  Optional: Override email body before approval
+</ParamField>
+
+<ParamField body="due_at" type="string">
+  Optional: Override scheduled time before approval (ISO 8601)
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "subject": "Final subject",
+  "body_html": "<p>Final content...</p>",
+  "due_at": "2025-11-11T09:00:00Z"
+}
+```
+</RequestExample>
+
+## Response
+
+<ResponseField name="data" type="object">
+  <Expandable title="Approval Result">
+    <ResponseField name="activity" type="object" required>
+      Updated activity object with approval status
+      
+      <Expandable title="Activity Object">
+        <ResponseField name="id" type="integer" required>
+          Activity ID
+        </ResponseField>
+        
+        <ResponseField name="status" type="string" required>
+          Status (will be "approved")
+        </ResponseField>
+        
+        <ResponseField name="is_approved" type="boolean" required>
+          Approval flag (will be true)
+        </ResponseField>
+        
+        <ResponseField name="approved_at" type="string" required>
+          Approval timestamp
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="email" type="object" required>
+      Created email object
+      
+      <Expandable title="Email Object">
+        <ResponseField name="id" type="integer" required>
+          Email ID
+        </ResponseField>
+        
+        <ResponseField name="sequence_lead_id" type="integer" required>
+          Sequence lead ID
+        </ResponseField>
+        
+        <ResponseField name="status" type="string" required>
+          Email status
+        </ResponseField>
+        
+        <ResponseField name="subject" type="string" required>
+          Email subject
+        </ResponseField>
+        
+        <ResponseField name="due_at" type="string" required>
+          Scheduled send time
+        </ResponseField>
+        
+        <ResponseField name="created_at" type="string" required>
+          Creation timestamp
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "activity": {
+      "id": 321,
+      "status": "approved",
+      "is_approved": true,
+      "approved_at": "2025-11-10T17:00:00Z"
+    },
+    "email": {
+      "id": 9003,
+      "sequence_lead_id": 1001,
+      "status": "approved",
+      "subject": "Final subject",
+      "due_at": "2025-11-11T09:00:00Z",
+      "created_at": "2025-11-10T17:00:00Z"
+    }
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>

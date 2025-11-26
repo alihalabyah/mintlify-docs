@@ -15,18 +15,11 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
+            "pages": ["index", "quickstart", "development"]
           },
           {
             "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
+            "pages": ["essentials/settings", "essentials/navigation"]
           },
           {
             "group": "Writing content",
@@ -51,18 +44,58 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
+            "pages": ["api-reference/introduction"]
+          },
+          {
+            "group": "Mailbox Management",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/mailbox/list",
+              "api-reference/mailbox/authorize",
+              "api-reference/mailbox/update"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Sequences",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/sequences/list",
+              "api-reference/sequences/create",
+              "api-reference/sequences/get",
+              "api-reference/sequences/update",
+              "api-reference/sequences/update-status"
+            ]
+          },
+          {
+            "group": "Templates",
+            "pages": ["api-reference/templates/list"]
+          },
+          {
+            "group": "Leads",
+            "pages": [
+              "api-reference/leads/list",
+              "api-reference/leads/enroll",
+              "api-reference/leads/update",
+              "api-reference/leads/remove",
+              "api-reference/leads/activities"
+            ]
+          },
+          {
+            "group": "Emails",
+            "pages": [
+              "api-reference/emails/list",
+              "api-reference/emails/history",
+              "api-reference/emails/update",
+              "api-reference/emails/cancel",
+              "api-reference/emails/engagement"
+            ]
+          },
+          {
+            "group": "Activities & Approvals",
+            "pages": [
+              "api-reference/activities/list-pending",
+              "api-reference/activities/update-draft",
+              "api-reference/activities/approve",
+              "api-reference/activities/reject"
             ]
           }
         ]
@@ -102,15 +135,15 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {

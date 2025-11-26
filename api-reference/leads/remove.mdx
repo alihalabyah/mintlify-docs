@@ -1,0 +1,79 @@
+---
+title: 'Remove Lead from Sequence'
+api: 'DELETE /sequences/:sequenceId/leads/:leadId'
+description: 'Remove a lead from a sequence (soft delete)'
+---
+
+## Path Parameters
+
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
+
+<ParamField path="leadId" type="integer" required>
+  Lead ID
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object">
+  Removed lead object with removal timestamp
+  
+  <Expandable title="Removed Lead Object">
+    <ResponseField name="id" type="integer" required>
+      Sequence lead ID
+    </ResponseField>
+    
+    <ResponseField name="lead_id" type="integer" required>
+      Lead ID
+    </ResponseField>
+    
+    <ResponseField name="lead_name" type="string" required>
+      Lead name
+    </ResponseField>
+    
+    <ResponseField name="company" type="string">
+      Company name
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Status (will be "finished")
+    </ResponseField>
+    
+    <ResponseField name="detailed_status" type="string" required>
+      Detailed status (will be "removed")
+    </ResponseField>
+    
+    <ResponseField name="introducers" type="array">
+      Introducer list
+    </ResponseField>
+    
+    <ResponseField name="removed_at" type="string" required>
+      Removal timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "id": 1001,
+    "lead_id": 501,
+    "lead_name": "Jane Doe",
+    "company": "Acme",
+    "status": "finished",
+    "detailed_status": "removed",
+    "introducers": [
+      {
+        "lead_id": 742,
+        "rank": 1
+      }
+    ],
+    "removed_at": "2025-11-25T12:00:00Z"
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>

@@ -1,0 +1,101 @@
+---
+title: 'List Sequence Leads'
+api: 'GET /sequences/:id/leads'
+description: 'List all leads enrolled in a sequence with their status and statistics'
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Sequence ID
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="status" type="string">
+  Filter by lead status: `not_started`, `active`, `paused`, `finished`
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of sequence lead objects
+  
+  <Expandable title="Sequence Lead Object">
+    <ResponseField name="id" type="integer" required>
+      Sequence lead ID
+    </ResponseField>
+    
+    <ResponseField name="lead_id" type="integer" required>
+      Lead ID
+    </ResponseField>
+    
+    <ResponseField name="lead_name" type="string" required>
+      Lead's full name
+    </ResponseField>
+    
+    <ResponseField name="company" type="string">
+      Company name
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Current status
+    </ResponseField>
+    
+    <ResponseField name="latest_update" type="string">
+      Latest activity type
+    </ResponseField>
+    
+    <ResponseField name="introducers" type="array">
+      Array of introducer objects with lead_id and rank
+    </ResponseField>
+    
+    <ResponseField name="next_followup_at" type="string">
+      Next scheduled follow-up timestamp
+    </ResponseField>
+    
+    <ResponseField name="last_sent_at" type="string">
+      Last outbound email timestamp
+    </ResponseField>
+    
+    <ResponseField name="last_inbound_at" type="string">
+      Last inbound email timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": [
+    {
+      "id": 1001,
+      "lead_id": 501,
+      "lead_name": "Jane Doe",
+      "company": "Acme",
+      "status": "active",
+      "latest_update": "email_sent",
+      "introducers": [
+        {
+          "lead_id": 742,
+          "rank": 1
+        },
+        {
+          "lead_id": 889,
+          "rank": 2
+        }
+      ],
+      "next_followup_at": "2025-11-15T10:00:00Z",
+      "last_sent_at": "2025-11-10T09:00:00Z",
+      "last_inbound_at": null
+    }
+  ],
+  "metadata": {},
+  "pagination": {
+    "cursor": null,
+    "has_more": false,
+    "count": 1
+  }
+}
+```
+</ResponseExample>

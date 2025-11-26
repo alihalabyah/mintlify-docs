@@ -1,0 +1,89 @@
+---
+title: 'Get Lead Activities'
+api: 'GET /sequences/:sequenceId/leads/:leadId/activities'
+description: 'Get all activity history for a specific lead in a sequence'
+---
+
+## Path Parameters
+
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
+
+<ParamField path="leadId" type="integer" required>
+  Lead ID
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of activity objects
+  
+  <Expandable title="Activity Object">
+    <ResponseField name="id" type="integer" required>
+      Activity ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_lead_id" type="integer" required>
+      Sequence lead ID
+    </ResponseField>
+    
+    <ResponseField name="activity_type" type="string" required>
+      Type: `outgoing_email`, `incoming_email`, etc.
+    </ResponseField>
+    
+    <ResponseField name="status" type="string">
+      Activity status
+    </ResponseField>
+    
+    <ResponseField name="subject" type="string">
+      Email subject (for outgoing emails)
+    </ResponseField>
+    
+    <ResponseField name="engagement_status" type="string">
+      Engagement status: `opened`, `replied`, etc.
+    </ResponseField>
+    
+    <ResponseField name="executed_at" type="string">
+      Execution timestamp
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string" required>
+      Creation timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": [
+    {
+      "id": 321,
+      "sequence_lead_id": 1001,
+      "activity_type": "outgoing_email",
+      "status": "approved",
+      "subject": "Quick intro",
+      "engagement_status": "opened",
+      "executed_at": "2025-11-10T09:00:00Z",
+      "created_at": "2025-11-10T08:55:00Z"
+    },
+    {
+      "id": 322,
+      "sequence_lead_id": 1001,
+      "activity_type": "incoming_email",
+      "status": null,
+      "engagement_status": "replied",
+      "executed_at": "2025-11-10T09:05:00Z",
+      "created_at": "2025-11-10T09:05:00Z"
+    }
+  ],
+  "metadata": {},
+  "pagination": {
+    "cursor": null,
+    "has_more": false,
+    "count": 2
+  }
+}
+```
+</ResponseExample>

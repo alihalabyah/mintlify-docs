@@ -1,0 +1,81 @@
+---
+title: 'OAuth Authorization'
+api: 'GET /auth/google'
+description: 'Exchange OAuth authorization code for access tokens and create/update integration'
+---
+
+## Query Parameters
+
+<ParamField query="authorizeGmail" type="boolean" required>
+  Must be `true` to authorize Gmail
+</ParamField>
+
+<ParamField query="code" type="string" required>
+  OAuth authorization code from Google
+</ParamField>
+
+<ParamField query="redirect_uri" type="string" required>
+  OAuth redirect URI
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object">
+  <Expandable title="Integration Object">
+    <ResponseField name="id" type="integer" required>
+      Integration ID
+    </ResponseField>
+    
+    <ResponseField name="type" type="string" required>
+      Integration type (e.g., "gmail")
+    </ResponseField>
+    
+    <ResponseField name="account_identifier" type="string" required>
+      Email address
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Connection status
+    </ResponseField>
+    
+    <ResponseField name="authorized_gmail" type="boolean" required>
+      Gmail authorization status
+    </ResponseField>
+    
+    <ResponseField name="per_day" type="integer" required>
+      Daily email limit
+    </ResponseField>
+    
+    <ResponseField name="per_hour" type="integer" required>
+      Hourly email limit
+    </ResponseField>
+    
+    <ResponseField name="min_delay_seconds" type="integer" required>
+      Minimum delay between emails
+    </ResponseField>
+    
+    <ResponseField name="timezone" type="string" required>
+      Timezone identifier
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "id": 42,
+    "type": "gmail",
+    "account_identifier": "me@acme.com",
+    "status": "connected",
+    "authorized_gmail": true,
+    "per_day": 200,
+    "per_hour": 20,
+    "min_delay_seconds": 600,
+    "timezone": "Africa/Cairo"
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>

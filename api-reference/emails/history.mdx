@@ -1,0 +1,98 @@
+---
+title: 'Get Lead Email History'
+api: 'GET /sequences/:sequenceId/leads/:leadId/emails'
+description: 'Get complete email thread history (sent + received) for a specific lead'
+---
+
+## Path Parameters
+
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
+
+<ParamField path="leadId" type="integer" required>
+  Lead ID
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object">
+  <Expandable title="Email History Object">
+    <ResponseField name="lead" type="object" required>
+      Lead information (lead_id, lead_name, email)
+    </ResponseField>
+    
+    <ResponseField name="email_threads" type="array" required>
+      Array of email thread objects
+      
+      <Expandable title="Thread Object">
+        <ResponseField name="thread_id" type="string" required>
+          Thread identifier
+        </ResponseField>
+        
+        <ResponseField name="emails" type="array" required>
+          Array of emails in the thread (both outgoing and inbox)
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "lead": {
+      "lead_id": 501,
+      "lead_name": "Jane Doe",
+      "email": "jane@acme.com"
+    },
+    "email_threads": [
+      {
+        "thread_id": "xx1",
+        "emails": [
+          {
+            "type": "email_outgoing",
+            "id": 9001,
+            "subject": "Quick intro",
+            "from_email": "user@company.com",
+            "to_email": "jane@acme.com",
+            "status": "sent",
+            "sent_at": "2025-11-10T09:00:00Z",
+            "integration_thread_id": "thr-123"
+          }
+        ]
+      },
+      {
+        "thread_id": "xx2",
+        "emails": [
+          {
+            "type": "email_outgoing",
+            "id": 9002,
+            "subject": "Follow-up",
+            "from_email": "user@company.com",
+            "to_email": "jane@acme.com",
+            "status": "sent",
+            "sent_at": "2025-11-10T09:00:00Z",
+            "integration_thread_id": "thr-456"
+          },
+          {
+            "type": "email_inbox",
+            "id": 7001,
+            "from_email": "jane@acme.com",
+            "received_at": "2025-11-10T09:05:00Z",
+            "body_preview": "Thanks for reaching out..."
+          }
+        ]
+      }
+    ]
+  },
+  "metadata": {},
+  "pagination": {
+    "cursor": null,
+    "has_more": false,
+    "count": 2
+  }
+}
+```
+</ResponseExample>

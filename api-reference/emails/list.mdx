@@ -1,0 +1,82 @@
+---
+title: 'List Sequence Emails'
+api: 'GET /sequences/:id/emails'
+description: 'List all sent and scheduled emails for a sequence'
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Sequence ID
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="status" type="string">
+  Filter by email status: `scheduled`, `sent`, `failed`
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of email objects
+  
+  <Expandable title="Email Object">
+    <ResponseField name="id" type="integer" required>
+      Email ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_lead_id" type="integer" required>
+      Sequence lead ID
+    </ResponseField>
+    
+    <ResponseField name="integration_id" type="integer" required>
+      Mailbox integration ID used
+    </ResponseField>
+    
+    <ResponseField name="to_email" type="string" required>
+      Recipient email address
+    </ResponseField>
+    
+    <ResponseField name="subject" type="string" required>
+      Email subject
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Email status
+    </ResponseField>
+    
+    <ResponseField name="scheduled_at" type="string">
+      Scheduled send time
+    </ResponseField>
+    
+    <ResponseField name="sent_at" type="string">
+      Actual send time
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": [
+    {
+      "id": 9001,
+      "sequence_lead_id": 1001,
+      "integration_id": 42,
+      "to_email": "jane@acme.com",
+      "subject": "Quick intro",
+      "status": "sent",
+      "scheduled_at": null,
+      "sent_at": "2025-11-10T09:00:00Z"
+    }
+  ],
+  "metadata": {},
+  "pagination": {
+    "cursor": null,
+    "has_more": false,
+    "count": 1
+  }
+}
+```
+</ResponseExample>

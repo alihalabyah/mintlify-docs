@@ -1,0 +1,97 @@
+---
+title: 'Get Email Engagement Activity'
+api: 'GET /emails/:id/activities'
+description: 'Get engagement timeline for a sent email (delivered, opened, clicked, replied, bounced)'
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Email ID from email_outgoing table
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object">
+  <Expandable title="Engagement Data">
+    <ResponseField name="events" type="array" required>
+      Array of engagement event objects (delivered, opened, clicked, bounced)
+      
+      <Expandable title="Event Object">
+        <ResponseField name="id" type="integer" required>
+          Event ID
+        </ResponseField>
+        
+        <ResponseField name="type" type="string" required>
+          Event type: `delivered`, `opened`, `clicked`, `bounced`
+        </ResponseField>
+        
+        <ResponseField name="created_at" type="string" required>
+          Event timestamp
+        </ResponseField>
+        
+        <ResponseField name="user_agent" type="string">
+          User agent (for opens/clicks)
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    
+    <ResponseField name="replies" type="array" required>
+      Array of reply email objects
+      
+      <Expandable title="Reply Object">
+        <ResponseField name="id" type="integer" required>
+          Reply email ID
+        </ResponseField>
+        
+        <ResponseField name="from_email" type="string" required>
+          Sender email address
+        </ResponseField>
+        
+        <ResponseField name="received_at" type="string" required>
+          Receipt timestamp
+        </ResponseField>
+        
+        <ResponseField name="body_preview" type="string">
+          Preview of reply body
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "events": [
+      {
+        "id": 1,
+        "type": "delivered",
+        "created_at": "2025-11-10T09:00:20Z"
+      },
+      {
+        "id": 2,
+        "type": "opened",
+        "created_at": "2025-11-10T09:03:11Z",
+        "user_agent": "Apple Mail"
+      }
+    ],
+    "replies": [
+      {
+        "id": 7001,
+        "from_email": "jane@acme.com",
+        "received_at": "2025-11-10T09:05:00Z",
+        "body_preview": "Thanks for reaching out..."
+      }
+    ]
+  },
+  "metadata": {},
+  "pagination": {
+    "cursor": null,
+    "has_more": false,
+    "count": 3
+  }
+}
+```
+</ResponseExample>

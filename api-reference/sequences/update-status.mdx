@@ -1,0 +1,58 @@
+---
+title: 'Update Sequence Status'
+api: 'PATCH /sequences/:id'
+description: 'Update only the status of a sequence (activate/pause/archive)'
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Sequence ID
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="status" type="string" required>
+  New status: `draft`, `active`, `paused`, `archived`
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "status": "active"
+}
+```
+</RequestExample>
+
+## Response
+
+<ResponseField name="data" type="object">
+  Updated sequence object with new status
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "id": 201,
+    "name": "Outbound – Cold V1",
+    "status": "active",
+    "instruction": "High-level rules...",
+    "lead_context": "<your_profile> Name: Abdallah Absi...",
+    "context": "...",
+    "templates": [
+      {
+        "name": "Step 1 - Intro",
+        "subject": "Quick intro",
+        "body": "<p>...</p>"
+      }
+    ],
+    "notes": "internal notes",
+    "created_at": "2025-11-25T10:00:00Z",
+    "updated_at": "2025-11-25T14:00:00Z"
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>

@@ -1,0 +1,89 @@
+---
+title: 'Update Scheduled Email'
+api: 'PATCH /emails/:id'
+description: "Edit a scheduled email's subject, body, or send time (only if not yet sent)"
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Email ID from email_outgoing table
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="subject" type="string">
+  Updated email subject
+</ParamField>
+
+<ParamField body="body_html" type="string">
+  Updated email body (HTML)
+</ParamField>
+
+<ParamField body="due_at" type="string">
+  Updated send time (ISO 8601 timestamp)
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "subject": "Updated subject",
+  "body_html": "<p>Updated...</p>",
+  "due_at": "2025-11-12T09:30:00Z"
+}
+```
+</RequestExample>
+
+## Response
+
+<ResponseField name="data" type="object">
+  Updated email object
+  
+  <Expandable title="Email Object">
+    <ResponseField name="id" type="integer" required>
+      Email ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_lead_id" type="integer" required>
+      Sequence lead ID
+    </ResponseField>
+    
+    <ResponseField name="subject" type="string" required>
+      Email subject
+    </ResponseField>
+    
+    <ResponseField name="body_html" type="string" required>
+      Email body
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Email status
+    </ResponseField>
+    
+    <ResponseField name="due_at" type="string" required>
+      Scheduled send time
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
+      Last update timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "id": 9002,
+    "sequence_lead_id": 1001,
+    "subject": "Updated subject",
+    "body_html": "<p>Updated...</p>",
+    "status": "approved",
+    "due_at": "2025-11-12T09:30:00Z",
+    "updated_at": "2025-11-11T15:00:00Z"
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>

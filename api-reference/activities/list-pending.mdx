@@ -1,0 +1,105 @@
+---
+title: 'List Pending Activities'
+api: 'GET /activities'
+description: 'List pending draft emails awaiting user approval'
+---
+
+## Query Parameters
+
+<ParamField query="activity_type" type="string">
+  Filter by activity type (e.g., `draft_email`)
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by status (e.g., `pending`)
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of pending activity objects
+  
+  <Expandable title="Activity Object">
+    <ResponseField name="id" type="integer" required>
+      Activity ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_lead_id" type="integer" required>
+      Sequence lead ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_id" type="integer" required>
+      Sequence ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_name" type="string" required>
+      Sequence name
+    </ResponseField>
+    
+    <ResponseField name="lead_name" type="string" required>
+      Lead name
+    </ResponseField>
+    
+    <ResponseField name="activity_type" type="string" required>
+      Activity type
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Current status
+    </ResponseField>
+    
+    <ResponseField name="subject" type="string">
+      Email subject
+    </ResponseField>
+    
+    <ResponseField name="body_html" type="string">
+      Email body (HTML)
+    </ResponseField>
+    
+    <ResponseField name="due_at" type="string">
+      Scheduled execution time
+    </ResponseField>
+    
+    <ResponseField name="ai_confidence" type="number">
+      AI confidence score (0-1)
+    </ResponseField>
+    
+    <ResponseField name="ai_reason" type="string">
+      AI reasoning for the draft
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string" required>
+      Creation timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": [
+    {
+      "id": 321,
+      "sequence_lead_id": 1001,
+      "sequence_id": 101,
+      "sequence_name": "Outbound – Cold V1",
+      "lead_name": "Jane Doe",
+      "activity_type": "draft_email",
+      "status": "pending",
+      "subject": "Hi Jane — quick intro",
+      "body_html": "<p>...</p>",
+      "due_at": "2025-11-11T08:00:00Z",
+      "ai_confidence": 0.82,
+      "ai_reason": "No prior response, sending initial outreach",
+      "created_at": "2025-11-10T15:00:00Z"
+    }
+  ],
+  "metadata": {},
+  "pagination": {
+    "cursor": null,
+    "has_more": false,
+    "count": 1
+  }
+}
+```
+</ResponseExample>

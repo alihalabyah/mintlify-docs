@@ -1,0 +1,114 @@
+---
+title: 'List Mailbox Integrations'
+api: 'GET /integrations/mailboxes'
+description: 'Get all mailbox integrations for the current user with their settings and status'
+---
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of mailbox integration objects
+  
+  <Expandable title="Integration Object">
+    <ResponseField name="id" type="integer" required>
+      Integration ID
+    </ResponseField>
+    
+    <ResponseField name="type" type="string" required>
+      Integration type (e.g., "gmail")
+    </ResponseField>
+    
+    <ResponseField name="account_identifier" type="string" required>
+      Email address or account identifier
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Connection status ("connected", "disconnected", "paused")
+    </ResponseField>
+    
+    <ResponseField name="is_default" type="boolean" required>
+      Whether this is the default mailbox
+    </ResponseField>
+    
+    <ResponseField name="per_day" type="integer" required>
+      Daily email limit
+    </ResponseField>
+    
+    <ResponseField name="per_hour" type="integer" required>
+      Hourly email limit
+    </ResponseField>
+    
+    <ResponseField name="min_delay_seconds" type="integer" required>
+      Minimum delay between emails in seconds
+    </ResponseField>
+    
+    <ResponseField name="timezone" type="string" required>
+      Timezone identifier (e.g., "Africa/Cairo")
+    </ResponseField>
+    
+    <ResponseField name="authorized_gmail" type="boolean" required>
+      Whether Gmail OAuth is authorized
+    </ResponseField>
+    
+    <ResponseField name="token_expiry_date" type="string">
+      OAuth token expiry timestamp (ISO 8601)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  <Expandable title="Pagination Object">
+    <ResponseField name="cursor" type="string">
+      Next page cursor
+    </ResponseField>
+    
+    <ResponseField name="has_more" type="boolean">
+      Whether more results are available
+    </ResponseField>
+    
+    <ResponseField name="count" type="integer">
+      Total count of results
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": [
+    {
+      "id": 42,
+      "type": "gmail",
+      "account_identifier": "me@acme.com",
+      "status": "connected",
+      "is_default": true,
+      "per_day": 200,
+      "per_hour": 20,
+      "min_delay_seconds": 600,
+      "timezone": "Africa/Cairo",
+      "authorized_gmail": true,
+      "token_expiry_date": "2025-11-30T10:00:00Z"
+    },
+    {
+      "id": 43,
+      "type": "gmail",
+      "account_identifier": "sales@acme.com",
+      "status": "connected",
+      "is_default": false,
+      "per_day": 150,
+      "per_hour": 15,
+      "min_delay_seconds": 900,
+      "timezone": "America/New_York",
+      "authorized_gmail": true,
+      "token_expiry_date": "2025-12-15T10:00:00Z"
+    }
+  ],
+  "metadata": {},
+  "pagination": {
+    "cursor": null,
+    "has_more": false,
+    "count": 2
+  }
+}
+```
+</ResponseExample>

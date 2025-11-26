@@ -1,0 +1,94 @@
+---
+title: 'Update Draft Activity'
+api: 'PATCH /activities/:id'
+description: 'Update the subject, body, or due time of a draft activity'
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Activity ID
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="subject" type="string">
+  Updated email subject
+</ParamField>
+
+<ParamField body="body_html" type="string">
+  Updated email body (HTML)
+</ParamField>
+
+<ParamField body="due_at" type="string">
+  Updated scheduled time (ISO 8601)
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "subject": "Updated subject",
+  "body_html": "<p>Updated content...</p>",
+  "due_at": "2025-11-11T10:00:00Z"
+}
+```
+</RequestExample>
+
+## Response
+
+<ResponseField name="data" type="object">
+  Updated activity object
+  
+  <Expandable title="Activity Object">
+    <ResponseField name="id" type="integer" required>
+      Activity ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_lead_id" type="integer" required>
+      Sequence lead ID
+    </ResponseField>
+    
+    <ResponseField name="activity_type" type="string" required>
+      Activity type
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Activity status
+    </ResponseField>
+    
+    <ResponseField name="subject" type="string">
+      Email subject
+    </ResponseField>
+    
+    <ResponseField name="body_html" type="string">
+      Email body
+    </ResponseField>
+    
+    <ResponseField name="due_at" type="string">
+      Scheduled time
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
+      Last update timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "id": 321,
+    "sequence_lead_id": 1001,
+    "activity_type": "draft_email",
+    "status": "pending",
+    "subject": "Updated subject",
+    "body_html": "<p>Updated content...</p>",
+    "due_at": "2025-11-11T10:00:00Z",
+    "updated_at": "2025-11-10T16:00:00Z"
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>

@@ -1,0 +1,71 @@
+---
+title: 'List Sequences'
+api: 'GET /sequences'
+description: 'List all sequences for the authenticated user with statistics'
+---
+
+## Query Parameters
+
+<ParamField query="status" type="string">
+  Filter by status: `draft`, `active`, `paused`, `archived`
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  Array of sequence objects
+  
+  <Expandable title="Sequence Object">
+    <ResponseField name="id" type="integer" required>
+      Sequence ID
+    </ResponseField>
+    
+    <ResponseField name="name" type="string" required>
+      Sequence name
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Current status
+    </ResponseField>
+    
+    <ResponseField name="total_leads" type="integer" required>
+      Total number of enrolled leads
+    </ResponseField>
+    
+    <ResponseField name="open_rate" type="number" required>
+      Email open rate (0-1)
+    </ResponseField>
+    
+    <ResponseField name="reply_rate" type="number" required>
+      Email reply rate (0-1)
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string" required>
+      Last update timestamp (ISO 8601)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": [
+    {
+      "id": 101,
+      "name": "Outbound – Cold V1",
+      "status": "active",
+      "total_leads": 250,
+      "open_rate": 0.47,
+      "reply_rate": 0.093,
+      "updated_at": "2025-11-08T10:00:00Z"
+    }
+  ],
+  "metadata": {},
+  "pagination": {
+    "cursor": null,
+    "has_more": false,
+    "count": 1
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,60 @@
+---
+title: 'Cancel Scheduled Email'
+api: 'DELETE /emails/:id'
+description: 'Cancel a scheduled email (sets status to canceled)'
+---
+
+## Path Parameters
+
+<ParamField path="id" type="integer" required>
+  Email ID from email_outgoing table
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object">
+  Canceled email object
+  
+  <Expandable title="Canceled Email Object">
+    <ResponseField name="id" type="integer" required>
+      Email ID
+    </ResponseField>
+    
+    <ResponseField name="sequence_lead_id" type="integer" required>
+      Sequence lead ID
+    </ResponseField>
+    
+    <ResponseField name="subject" type="string" required>
+      Email subject
+    </ResponseField>
+    
+    <ResponseField name="status" type="string" required>
+      Status (will be "canceled")
+    </ResponseField>
+    
+    <ResponseField name="due_at" type="string">
+      Original scheduled time
+    </ResponseField>
+    
+    <ResponseField name="canceled_at" type="string" required>
+      Cancellation timestamp
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "id": 9002,
+    "sequence_lead_id": 1001,
+    "subject": "Updated subject",
+    "status": "canceled",
+    "due_at": "2025-11-12T09:30:00Z",
+    "canceled_at": "2025-11-11T16:00:00Z"
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>

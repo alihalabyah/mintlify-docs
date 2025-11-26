@@ -1,0 +1,93 @@
+---
+title: 'Update Sequence Lead'
+api: 'PATCH /sequences/:sequenceId/leads/:leadId'
+description: "Update a lead's introducers, status, or next follow-up time"
+---
+
+## Path Parameters
+
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
+
+<ParamField path="leadId" type="integer" required>
+  Lead ID
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="introducers" type="array">
+  Array of introducer objects
+  
+  <Expandable title="Introducer Object">
+    <ParamField body="lead_id" type="integer" required>
+      Introducer lead ID
+    </ParamField>
+    
+    <ParamField body="rank" type="integer" required>
+      Priority rank (1 is highest)
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="status" type="string">
+  Lead status: `not_started`, `active`, `paused`, `finished`
+</ParamField>
+
+<ParamField body="next_followup_at" type="string">
+  Next follow-up timestamp (ISO 8601)
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "introducers": [
+    {
+      "lead_id": 742,
+      "rank": 1
+    },
+    {
+      "lead_id": 889,
+      "rank": 2
+    }
+  ],
+  "status": "active",
+  "next_followup_at": "2025-11-15T10:00:00Z"
+}
+```
+</RequestExample>
+
+## Response
+
+<ResponseField name="data" type="object">
+  Updated sequence lead object
+</ResponseField>
+
+<ResponseExample>
+```json
+{
+  "data": {
+    "id": 1001,
+    "lead_id": 501,
+    "lead_name": "Jane Doe",
+    "company": "Acme",
+    "status": "active",
+    "latest_update": "email_sent",
+    "introducers": [
+      {
+        "lead_id": 742,
+        "rank": 1
+      },
+      {
+        "lead_id": 889,
+        "rank": 2
+      }
+    ],
+    "next_followup_at": "2025-11-15T10:00:00Z",
+    "updated_at": "2025-11-25T11:00:00Z"
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+</ResponseExample>
