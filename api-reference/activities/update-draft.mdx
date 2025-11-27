@@ -1,7 +1,7 @@
 ---
 title: 'Update Activity'
 api: 'PATCH /sequences/:sequenceId/activities/:activityId'
-description: 'Update the content or scheduled time of a pending activity'
+description: 'Update activity content, scheduled time, or approval status'
 ---
 
 ## Path Parameters
@@ -28,12 +28,33 @@ description: 'Update the content or scheduled time of a pending activity'
   Updated scheduled time (ISO 8601)
 </ParamField>
 
+<ParamField body="status" type="string">
+  Update status: `pending`, `approved`, `rejected`
+</ParamField>
+
+<ParamField body="rejection_reason" type="string">
+  Rejection reason (required when status is `rejected`)
+</ParamField>
+
 <RequestExample>
-```json
+```json Update Content
 {
   "subject": "Updated subject",
   "body": "<p>Updated content...</p>",
   "due_at": "2025-11-11T10:00:00Z"
+}
+```
+
+```json Approve Activity
+{
+  "status": "approved"
+}
+```
+
+```json Reject Activity
+{
+  "status": "rejected",
+  "rejection_reason": "Email tone is too formal, needs to be more casual and friendly"
 }
 ```
 </RequestExample>
@@ -46,22 +67,64 @@ description: 'Update the content or scheduled time of a pending activity'
   <Expandable title="Update Result">
     <ResponseField name="activity" type="object" required>
       Updated activity object
+      
+      <Expandable title="Activity Object">
+        <ResponseField name="id" type="integer" required>
+          Activity ID
+        </ResponseField>
+        
+        <ResponseField name="sequence_lead_id" type="integer" required>
+          Sequence lead ID
+        </ResponseField>
+        
+        <ResponseField name="activity_type" type="string" required>
+          Activity type
+        </ResponseField>
+        
+        <ResponseField name="status" type="string">
+          Status: `pending`, `approved`, `rejected`
+        </ResponseField>
+        
+        <ResponseField name="is_approved" type="boolean">
+          Approval flag
+        </ResponseField>
+        
+        <ResponseField name="outgoing_email_id" type="integer">
+          Associated email ID
+        </ResponseField>
+        
+        <ResponseField name="due_at" type="string">
+          Scheduled time
+        </ResponseField>
+        
+        <ResponseField name="executed_at" type="string">
+          Execution timestamp (set when email is sent)
+        </ResponseField>
+        
+        <ResponseField name="rejection_reason" type="string">
+          Rejection reason (if rejected)
+        </ResponseField>
+      </Expandable>
     </ResponseField>
     
-    <ResponseField name="email" type="object" required>
-      Associated email_outgoing record with updated content
+    <ResponseField name="email" type="object">
+      Associated email_outgoing record (if applicable)
       
       <Expandable title="Email Object">
         <ResponseField name="id" type="integer" required>
           Email ID
         </ResponseField>
         
+        <ResponseField name="status" type="string" required>
+          Email status (updated to `scheduled` when approved)
+        </ResponseField>
+        
         <ResponseField name="content" type="object" required>
-          Updated email content (subject, body)
+          Email content (subject, body)
         </ResponseField>
         
         <ResponseField name="due_at" type="string">
-          Updated scheduled time
+          Scheduled time
         </ResponseField>
         
         <ResponseField name="updated_at" type="string" required>
@@ -73,7 +136,7 @@ description: 'Update the content or scheduled time of a pending activity'
 </ResponseField>
 
 <ResponseExample>
-```json
+```json Content Update Response
 {
   "data": {
     "activity": {
@@ -100,8 +163,68 @@ description: 'Update the content or scheduled time of a pending activity'
   "pagination": null
 }
 ```
+
+```json Approval Response
+{
+  "data": {
+    "activity": {
+      "id": 321,
+      "sequence_lead_id": 1001,
+      "activity_type": "outgoing_email",
+      "status": "approved",
+      "is_approved": true,
+      "executed_at": null,
+      "created_at": "2025-11-10T15:00:00Z"
+    },
+    "email": {
+      "id": 9003,
+      "sequence_lead_id": 1001,
+      "status": "scheduled",
+      "content": {
+        "subject": "Final subject line",
+        "body": "<p>Finalized email content...</p>"
+      },
+      "due_at": "2025-11-11T09:00:00Z",
+      "to_email": "jane@acme.com"
+    }
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
+
+```json Rejection Response
+{
+  "data": {
+    "activity": {
+      "id": 321,
+      "sequence_lead_id": 1001,
+      "activity_type": "outgoing_email",
+      "status": "rejected",
+      "is_approved": false,
+      "rejection_reason": "Email tone is too formal, needs to be more casual and friendly",
+      "created_at": "2025-11-10T15:00:00Z"
+    }
+  },
+  "metadata": {},
+  "pagination": null
+}
+```
 </ResponseExample>
 
-<Note>
-  Users can iterate on drafts multiple times before approving. Each update modifies the associated `email_outgoing` record while keeping the activity in `pending` status.
-</Note>
+## Behavior Notes
+
+### Content Updates
+- Users can iterate on drafts multiple times before approving
+- Each update modifies the associated `email_outgoing` record
+- Activity remains in `pending` status
+
+### Approval
+- Setting `status="approved"` schedules the email for sending
+- Email status changes to `scheduled`
+- Triggers Workflow #6 (Email Sending) with rate limiting
+
+### Rejection
+- Setting `status="rejected"` cancels the current draft
+- Automatically triggers Workflow #4 (AI Next Action) to generate new alternative
+- Rejection reason is included in AI context for better results

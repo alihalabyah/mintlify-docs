@@ -62,44 +62,19 @@
               "api-reference/sequences/create",
               "api-reference/sequences/get",
               "api-reference/sequences/update",
-              "api-reference/sequences/update-status"
-            ]
-          },
-          {
-            "group": "Templates",
-            "pages": ["api-reference/templates/list"]
-          },
-          {
-            "group": "Leads",
-            "pages": [
+              "api-reference/sequences/update-status",
               "api-reference/leads/list",
               "api-reference/leads/enroll",
               "api-reference/leads/update",
               "api-reference/leads/remove",
-              "api-reference/leads/activities"
-            ]
-          },
-          {
-            "group": "Emails",
-            "pages": [
+              "api-reference/leads/activities",
               "api-reference/emails/list",
               "api-reference/emails/history",
               "api-reference/emails/update",
-              "api-reference/emails/cancel"
-            ]
-          },
-          {
-            "group": "Activities & Approvals",
-            "pages": [
+              "api-reference/emails/cancel",
               "api-reference/activities/list-pending",
-              "api-reference/activities/update-draft",
-              "api-reference/activities/approve",
-              "api-reference/activities/reject"
+              "api-reference/activities/update-draft"
             ]
-          },
-          {
-            "group": "Webhooks",
-            "pages": ["api-reference/webhooks/incoming-email"]
           }
         ]
       }

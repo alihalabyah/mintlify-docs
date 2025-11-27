@@ -24,16 +24,18 @@
 | Update Scheduled Email | Sequences | `PATCH /sequences/:sequenceId/emails/:emailId` | Edit a draft or scheduled email's content or send time (only if not yet sent) |
 | Cancel Scheduled Email | Sequences | `DELETE /sequences/:sequenceId/emails/:emailId` | Cancel a scheduled email by setting status to failed with cancellation metadata |
 | List Pending Activities | Sequences | `GET /sequences/:sequenceId/activities` | List pending activities awaiting user approval (typically outgoing email drafts) |
-| Update Activity | Sequences | `PATCH /sequences/:sequenceId/activities/:activityId` | Update the content or scheduled time of a pending activity |
-| Approve Activity | Sequences | `POST /sequences/:sequenceId/activities/:activityId/approve` | Approve an activity and schedule it for execution |
-| Reject Activity | Sequences | `POST /sequences/:sequenceId/activities/:activityId/reject` | Reject an activity and trigger AI to generate a new alternative |
-| **Webhooks** |
-| Incoming Email Webhook | Webhooks | `POST /webhooks/emails/incoming` | Webhook endpoint for processing incoming emails from Gmail (via Pub/Sub) |
+| Update Activity | Sequences | `PATCH /sequences/:sequenceId/activities/:activityId` | Update activity content, scheduled time, or approval status (approve/reject) |
 
 ## Notes
 
-- All leads, emails, and activities are now under the **Sequences** namespace
+- All leads, emails, and activities are under the **Sequences** namespace
 - Mailbox endpoints remain at `/integrations` and `/auth/google`
-- Webhook endpoints remain at `/webhooks`
-- Email Templates endpoint has been excluded as requested
+- Email Templates endpoint has been removed
+- Webhook endpoints have been removed
+- Approve and Reject have been consolidated into the Update Activity endpoint using the `status` field
 - Path parameters follow the pattern: `:sequenceId`, `:leadId`, `:emailId`, `:activityId`
+
+## Total Endpoints: 19
+
+- **Mailbox:** 3 endpoints
+- **Sequences:** 16 endpoints (sequences + leads + emails + activities)
