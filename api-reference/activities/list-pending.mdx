@@ -1,8 +1,14 @@
 ---
 title: 'List Pending Activities'
-api: 'GET /activities'
+api: 'GET /sequences/:sequenceId/activities'
 description: 'List pending activities awaiting user approval (typically outgoing email drafts)'
 ---
+
+## Path Parameters
+
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
 
 ## Query Parameters
 
@@ -12,10 +18,6 @@ description: 'List pending activities awaiting user approval (typically outgoing
 
 <ParamField query="status" type="string">
   Filter by status: `pending`, `approved`, `rejected`
-</ParamField>
-
-<ParamField query="sequence_id" type="integer">
-  Filter by specific sequence
 </ParamField>
 
 ## Response

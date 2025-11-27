@@ -1,12 +1,16 @@
 ---
 title: 'Approve Activity'
-api: 'POST /activities/:id/approve'
+api: 'POST /sequences/:sequenceId/activities/:activityId/approve'
 description: 'Approve an activity and schedule it for execution'
 ---
 
 ## Path Parameters
 
-<ParamField path="id" type="integer" required>
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
+
+<ParamField path="activityId" type="integer" required>
   Activity ID
 </ParamField>
 

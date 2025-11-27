@@ -1,12 +1,16 @@
 ---
 title: 'Cancel Scheduled Email'
-api: 'DELETE /emails/:id'
+api: 'DELETE /sequences/:sequenceId/emails/:emailId'
 description: 'Cancel a scheduled email by setting status to failed with cancellation metadata'
 ---
 
 ## Path Parameters
 
-<ParamField path="id" type="integer" required>
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
+
+<ParamField path="emailId" type="integer" required>
   Email ID from email_outgoing table
 </ParamField>
 

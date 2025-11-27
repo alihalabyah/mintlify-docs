@@ -1,12 +1,16 @@
 ---
 title: 'Reject Activity'
-api: 'POST /activities/:id/reject'
+api: 'POST /sequences/:sequenceId/activities/:activityId/reject'
 description: 'Reject an activity and trigger AI to generate a new alternative'
 ---
 
 ## Path Parameters
 
-<ParamField path="id" type="integer" required>
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
+
+<ParamField path="activityId" type="integer" required>
   Activity ID
 </ParamField>
 

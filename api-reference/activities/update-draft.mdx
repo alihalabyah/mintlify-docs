@@ -1,12 +1,16 @@
 ---
 title: 'Update Activity'
-api: 'PATCH /activities/:id'
+api: 'PATCH /sequences/:sequenceId/activities/:activityId'
 description: 'Update the content or scheduled time of a pending activity'
 ---
 
 ## Path Parameters
 
-<ParamField path="id" type="integer" required>
+<ParamField path="sequenceId" type="integer" required>
+  Sequence ID
+</ParamField>
+
+<ParamField path="activityId" type="integer" required>
   Activity ID
 </ParamField>
 
