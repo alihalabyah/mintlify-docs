@@ -54,14 +54,6 @@ description: 'Get all activity history for a specific lead in a sequence'
       Actual execution timestamp
     </ResponseField>
     
-    <ResponseField name="outgoing_email_id" type="integer">
-      FK to email_outgoing table
-    </ResponseField>
-    
-    <ResponseField name="incoming_email_id" type="integer">
-      FK to email_inbox table
-    </ResponseField>
-    
     <ResponseField name="integration_thread_id" type="string">
       Gmail thread ID
     </ResponseField>
@@ -100,8 +92,6 @@ description: 'Get all activity history for a specific lead in a sequence'
       "status": "approved",
       "due_at": "2025-11-10T09:00:00Z",
       "executed_at": "2025-11-10T09:00:15Z",
-      "outgoing_email_id": 9001,
-      "incoming_email_id": null,
       "integration_thread_id": "thread_xyz789",
       "integration_message_id": "msg_abc123",
       "ai_confidence_score": 0.85,
@@ -120,8 +110,6 @@ description: 'Get all activity history for a specific lead in a sequence'
       "status": null,
       "due_at": null,
       "executed_at": "2025-11-10T09:05:00Z",
-      "outgoing_email_id": null,
-      "incoming_email_id": 7001,
       "integration_thread_id": "thread_xyz789",
       "integration_message_id": "msg_def456",
       "ai_confidence_score": null,
@@ -141,5 +129,5 @@ description: 'Get all activity history for a specific lead in a sequence'
 </ResponseExample>
 
 <Note>
-  Activities are ordered chronologically (created_at ASC) to show the complete conversation timeline. Use `outgoing_email_id` or `incoming_email_id` to retrieve full email content from respective tables.
+  Activities are ordered chronologically (created_at ASC) to show the complete conversation timeline.
 </Note>

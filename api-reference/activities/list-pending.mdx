@@ -54,14 +54,6 @@ description: 'List pending activities awaiting user approval (typically outgoing
       When the action was actually executed
     </ResponseField>
     
-    <ResponseField name="outgoing_email_id" type="integer">
-      Reference to email_outgoing record
-    </ResponseField>
-    
-    <ResponseField name="incoming_email_id" type="integer">
-      Reference to email_inbox record
-    </ResponseField>
-    
     <ResponseField name="integration_thread_id" type="string">
       Gmail thread ID
     </ResponseField>
@@ -100,8 +92,6 @@ description: 'List pending activities awaiting user approval (typically outgoing
       "status": "pending",
       "due_at": "2025-11-11T08:00:00Z",
       "executed_at": null,
-      "outgoing_email_id": 9003,
-      "incoming_email_id": null,
       "integration_thread_id": null,
       "integration_message_id": null,
       "ai_confidence_score": 0.82,
@@ -128,5 +118,5 @@ description: 'List pending activities awaiting user approval (typically outgoing
 </ResponseExample>
 
 <Note>
-  The associated `email_outgoing` record (referenced by `outgoing_email_id`) contains the actual email content (subject, body). Use the email endpoints to retrieve or modify the draft content.
+  Not passing a sequence ID pulls pending activities of all user sequences.
 </Note>
